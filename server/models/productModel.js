@@ -1,0 +1,77 @@
+const { Schema, models, model } = require('mongoose')
+
+
+const productSchema = new Schema({
+	name: {
+		type: String,
+		unique: true,
+		required: true,
+		trim: true,
+		lowercase: true,
+		// minlength: 10,
+	},
+	price: {
+		type: Number,
+		required: true,
+		min: 5,
+	},
+	rating: {
+		type: Number,
+		min: 0,
+		default: 5
+	},
+	summary: {
+		type: String,
+		required: true,
+		trim: true,
+		lowercase: true,
+		// minlength: 20,
+	},
+	description: {
+		type: String,
+		required: true,
+		trim: true,
+		lowercase: true,
+		// minlength: 50,
+	},
+	coverPhoto: {
+		type: String,
+		default: 'images/coverPhoto.jpg'
+	},
+	images: [{
+		type: String,
+		// default: 'images/image1.jpg'
+	}],
+
+	// reviews: {
+	// 	type: Schema.Types.ObjectId
+	// 	ref: 'User'
+	// }
+
+
+}, {
+	timestamps: true
+})
+
+module.exports =  models.Product || model('Product', productSchema)
+
+
+
+
+
+
+
+
+/*
+
+{
+	"name" : "product 1",
+	"price" : 42,
+	"rating" : 4.5,
+	"summary" : "little summary goes here",
+	"description" : "long description little summary goes here",
+	"coverPhoto" : "/images/coverPhoto.jpg",
+	"images" : [ "/images/image1.jpg" ]
+}
+
+*/
