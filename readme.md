@@ -3,6 +3,9 @@
 
 ### Backend
 	. mongodb (mongoose)
+	. Child Referencing with Other Schema by id
+	. Parent Referencing with Other Schema (virtually)
+	. protected routes: some only by admin and other for regular user, and guest has limited access.
 
 
 ### Frontend
