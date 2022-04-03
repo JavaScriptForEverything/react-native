@@ -36,7 +36,9 @@ const userSchema = new Schema({
 		type: String,
 		enum: ['admin', 'user', 'guest'],
 		default: 'user'
-	}
+	},
+	passwordChangedAt: Date, 						// used to check passed changed or not
+		
 
 
 }, {
@@ -44,7 +46,6 @@ const userSchema = new Schema({
 })
 
 userSchema.pre('save', async function() {
-	console.log( !this.isModified('password') )
 	if( !this.isModified('password') ) return
 
 	this.password = await bcrypt.hash(this.password, 12)
