@@ -50,7 +50,18 @@ const productSchema = new Schema({
 
 
 }, {
-	timestamps: true
+	timestamps: true,
+	toJSON: { virtuals: true },
+})
+
+productSchema.virtual('reviews', {
+	ref: 'Review',
+	foreignField: 'product',
+	localField: '_id'
+})
+
+productSchema.pre(/find*/, function() {
+	this.populate('reviews', '-__v -createdAt -updatedAt')
 })
 
 module.exports =  models.Product || model('Product', productSchema)

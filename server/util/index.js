@@ -46,14 +46,22 @@ exports.globalErrorHandler =  (err, req, res, next) => {
 
 
 
-// const filteredBody = filteredArrayObject(req.body, ['role'])
-exports.filteredArrayObject = (obj, arr) => {
-	const temObj = {}
+// const filteredBody = filterArrayObject(req.body, ['role'], true) 		=> filter only role property
+// const filteredBody = filterArrayObject(req.body, ['pass'], false) 		=> allow 	only pass property
+exports.filterArrayObject = (obj, arr, isAlter=true) => {
+	if(!obj || !arr) return console.log('(allowedArrayObject) function need 2 argument, arg1: {}, and arg2: []')
 
-	Object.keys(obj).forEach(field => !arr.includes(field) && (temObj[field] = obj[field]) )
+	if(obj.constructor !== Object) return console.log(`1st arg must be an object`)
+	if(arr.constructor !== Array) return console.log(`2nd arg must be an Array`)
+
+	const alter = (value) => isAlter ? !value : value
+
+	const temObj = {}
+	Object.keys(obj).forEach(field => alter( arr.includes(field) )  && (temObj[field] = obj[field]) )
 
 	return temObj
 }
+
 
 // const token = getToken(user.id)
 exports.getToken = (id) => jwt.sign({ id }, process.env.JWT_TOKEN_SECRET, { expiresIn: process.env.JWT_TOKEN_EXPIRES })

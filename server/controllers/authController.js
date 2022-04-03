@@ -4,6 +4,7 @@ const { catchAsync, verifyToken, appError } = require('../util')
 
 
 
+// is has token only allow to next middleware: means no token no access those route on which it applied to
 exports.protect = catchAsync( async (req, res, next) => {
 
 	const token = req.headers.authorization?.split(' ')?.[1] 		// `Bearer ${token}` => ['Bearer ', 'token...']
@@ -11,7 +12,7 @@ exports.protect = catchAsync( async (req, res, next) => {
 
 	const { id, iat } = verifyToken(token)
 
-	const user = await User.findById(id)
+	const user = await User.findById(id).select('+password')
 	if(!user) return next( appError('can not fetched data from database'))
 
 	req.user = user 									// used to pass user to next middleware to .restrictTo('admin')
@@ -29,3 +30,8 @@ exports.restrictTo = (...roles) => (req, res, next) => {
 }
 
 
+
+
+// exports.getMe = (req, res, next) => {
+
+// }
