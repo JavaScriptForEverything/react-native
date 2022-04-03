@@ -27,7 +27,7 @@ exports.login = catchAsync( async (req, res, next) => {
 	const isVerifiedPassword = await bcrypt.compare(req.body.password, user.password)
 	if( !isVerifiedPassword ) return next( appError('did you forget your password', 404) )
 
-	const token = getToken(user.id)
+	const token = getToken(user.userId)
 
 	res.status(200).json({
 		status: 'success',
@@ -49,13 +49,13 @@ exports.getAllUsers = catchAsync( async (req, res, next) => {
 })
 
 
-// Route-1: router.route('/:id').get(userController.getUserById)
+// Route-1: router.route('/:userId').get(userController.getUserById)
 // Route-2: router.route('/me').get(authController.protect, userController.getUserById)
 exports.getUserById = catchAsync( async (req, res, next) => {
-	/* 	req.user.id  		= means this route must pass after protect middleware
-			req.params.id  	= /api/users/:id 		: id must supply in url */
+	/* 	req.user.userId  		= means this route must pass after protect middleware
+			req.params.userId  	= /api/users/:userId 		: id must supply in url */
 
-	const userId = req.user?.id || req.params.id
+	const userId = req.user?.userId || req.params.userId
 	const user = await User.findById(userId)
 
 	res.status(200).json({
@@ -65,17 +65,17 @@ exports.getUserById = catchAsync( async (req, res, next) => {
 })
 
 
-// Route-1: router.route('/:id').patch(userController.updateUserById)
+// Route-1: router.route('/:userId').patch(userController.updateUserById)
 // Route-2: router.route('/me').patch(authController.protect, userController.updateUserById)
 exports.updateUserById = catchAsync( async (req, res, next) => {
 	if(req.body.password) return next(appError('Please update password, by "update-my-password" route', 403))
 
 	const filteredBody = filterArrayObject(req.body, ['role', 'password'])
 
-	/* 	req.user.id  		= means this route must pass after protect middleware
-			req.params.id  	= /api/users/:id 		: id must supply in url */
+	/* 	req.user.userId  		= means this route must pass after protect middleware
+			req.params.userId  	= /api/users/:userId 		: userId must supply in url */
 
-	const userId = req.user?.id || req.params.id
+	const userId = req.user?.userId || req.params.userId
 	const user = await User.findByIdAndUpdate(userId, filteredBody, { new: true, runValidators: true })
 
 	res.status(201).json({
@@ -91,7 +91,7 @@ exports.updateUserById = catchAsync( async (req, res, next) => {
 exports.updateMyPassword = catchAsync( async (req, res, next) => {
 	const user = req.user 		// fomes from protect middleware
 
-	// const user = await User.findById(req.body.id)
+	// const user = await User.findById(req.body.userId)
 
 	// user.password = req.body.password
 	// const newUser = await user.save({ validateBeforeSave: false })
@@ -109,12 +109,51 @@ exports.updateMyPassword = catchAsync( async (req, res, next) => {
 	user.passwordChangedAt = Date.now() 					// used later to checked reset password 
 	user.save({ validateBeforeSave: false })
 
-	const token = getToken(user.id)
+	const token = getToken(user.userId)
 
 	res.status(201).json({
 		status: 'success',
 		message: 'password updated successfully, please re-login',
 		token
+	})
+})
+
+
+
+
+// Route-1: router.route('/:userId').delete(userController.removeUserById)
+// Route-2 :router.route('/me') .delete(authController.protect, userController.removeUserById)
+exports.removeUserById = catchAsync( async (req, res, next) => {
+	const userId = req.user?.userId || req.params.userId
+
+  const user = await User.findByIdAndDelete(userId)
+  if(!user) return next(appError('Can not delete this user'))
+
+  res.status(204).send()
+})
+
+
+
+// router.route('/forgot-password').post(userController.forgotPassword)
+exports.forgotPassword = catchAsync( async (req, res, next) => {
+
+  const user = { name: 'riajul', age: 27 }
+  if(!user) return next(appError('No user found'))
+
+	res.status(201).json({
+		status: 'success',
+		user: req.body
+	})
+})
+
+// router.route('/reset-password').patch(userController.resetPassword)
+exports.resetPassword = catchAsync( async (req, res, next) => {
+  const user = { name: 'riajul', age: 27 }
+  if(!user) return next(appError('No user found'))
+
+	res.status(201).json({
+		status: 'success',
+		user: req.body
 	})
 })
 

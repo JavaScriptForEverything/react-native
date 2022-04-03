@@ -13,9 +13,10 @@ exports.protect = catchAsync( async (req, res, next) => {
 	const { id, iat } = verifyToken(token)
 
 	const user = await User.findById(id).select('+password')
-	if(!user) return next( appError('can not fetched data from database'))
+	if(!user) return next( appError('Please login', 404))
 
 	req.user = user 									// used to pass user to next middleware to .restrictTo('admin')
+	req.user.userId = req.user.id 		// so that we can use user.userId every where. else mergeParams create confusion
 
 	next()
 })
