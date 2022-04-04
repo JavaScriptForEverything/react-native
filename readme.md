@@ -6,6 +6,9 @@
 	. Child Referencing with Other Schema by id
 	. Parent Referencing with Other Schema (virtually)
 	. protected routes: some only by admin and other for regular user, and guest has limited access.
+	. reset password by email
+	. API Features : search, pagination, filter documents
+	. image upload
 
 
 ##### Frontend
