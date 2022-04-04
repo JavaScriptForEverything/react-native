@@ -51,17 +51,21 @@ const productSchema = new Schema({
 
 }, {
 	timestamps: true,
-	toJSON: { virtuals: true },
+
+	// Step-1: Enable virtual fields
+	toJSON: { virtuals: true }, 	
 })
 
-productSchema.virtual('reviews', {
+// Step-2: Create Virtual Field & link Product._id <===> Review._id
+productSchema.virtual('reviews', { 	
 	ref: 'Review',
 	foreignField: 'product',
 	localField: '_id'
 })
 
+// Step-3: Populate Reviews from Review._id
 productSchema.pre(/find*/, function() {
-	this.populate('reviews', '-__v -createdAt -updatedAt')
+	// this.populate('reviews', '-__v -createdAt -updatedAt')
 })
 
 module.exports =  models.Product || model('Product', productSchema)

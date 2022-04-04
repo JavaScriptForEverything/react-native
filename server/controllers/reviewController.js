@@ -1,14 +1,20 @@
 const Review = require('../models/reviewModel')
-const { catchAsync, appError, filterArrayObject } = require('../util')
+const { catchAsync, appError, filterArrayObject, apiFeatures } = require('../util')
 
 // router.route('/').get(reviewController.getAllReviews)
 // router.route('/:productId/reviews').get(reviewController.getReviewById)
 exports.getAllReviews = catchAsync( async (req, res, next) => {
-  
-  console.log(req.params)
+  const productId = req.params?.productId
+  const filterObj = productId ? { product: productId } : {}
 
+  // const reviews = await Review.find(filterObj)
+  const reviews = await apiFeatures(Review.find(filterObj), req.query)
+	.pagination()
+	.sort()
+	.search()
+	.filter()
+	.query
 
-  const reviews = await Review.find()
 
   res.status(200).json({
     status: 'success',
@@ -16,7 +22,6 @@ exports.getAllReviews = catchAsync( async (req, res, next) => {
     reviews
   })
 })
-
 
 // router.route('/').post(reviewController.addReview)
 // router.route('/:productId/reviews').post(reviewController.addReview)
@@ -27,8 +32,7 @@ exports.addReview = catchAsync( async (req, res, next) => {
   filteredBody.user = req.user?.userId || filteredBody.user
   filteredBody.product = req.params?.productId || filteredBody.product
 
-  const review = filteredBody
-  // const review = await Review.create(filteredBody)
+  const review = await Review.create(filteredBody)
   if(!review) return next(appError('Can not create review'))
 
   res.status(201).json({
@@ -42,9 +46,11 @@ exports.addReview = catchAsync( async (req, res, next) => {
 // router.route('/:productId/reviews/:reviewId').get(reviewController.getReviewById)
 exports.getReviewById = catchAsync( async (req, res, next) => {
 
-  console.log(req.params)
-
-  const review = await Review.findById(req.params.reviewId)
+  const productId = req.params?.productId
+  const reviewId = req.params?.reviewId
+  const filterObj = productId ? { product: productId, _id: reviewId } : { _id: reviewId }
+  const review = await Review.findOne(filterObj)
+  // const review = await Review.findById(req.params.reviewId)
   if(!review) return next(appError('No Review Found', 404))
 
   res.status(200).json({
@@ -60,7 +66,10 @@ exports.updateReviewById = catchAsync( async (req, res, next) => {
   const allowedFields = ['review', 'rating', 'user', 'product']
   const filteredBody = filterArrayObject(req.body, allowedFields, false)
 
-  const review = await Review.findByIdAndUpdate(req.params.reviewId, filteredBody, { new: true, runValidators: true })
+  filteredBody.user = req.user?.userId || filteredBody.user
+  filteredBody.product = req.params?.productId || filteredBody.product
+
+  const review = await Review.findByIdAndUpdate(req.params?.reviewId, filteredBody, { new: true, runValidators: true })
   if(!review) return next(appError('Can not update review'))
 
   res.status(201).json({

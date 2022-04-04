@@ -1,9 +1,15 @@
 const Product = require('../models/productModel')
-const { catchAsync, appError } = require('../util')
+const { catchAsync, appError, apiFeatures } = require('../util')
 
 
 exports.getAllProducts = catchAsync( async (req, res, next) => {
-	const products = await Product.find()
+	// const products = await Product.find()
+	const products = await apiFeatures(Product.find(), req.query)
+	.pagination()
+	.sort()
+	.search()
+	.filter()
+	.query
 
 	res.status(200).json({
 		status: 'success',

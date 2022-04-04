@@ -7,10 +7,11 @@ const { catchAsync, verifyToken, appError } = require('../util')
 // is has token only allow to next middleware: means no token no access those route on which it applied to
 exports.protect = catchAsync( async (req, res, next) => {
 
+
 	const token = req.headers.authorization?.split(' ')?.[1] 		// `Bearer ${token}` => ['Bearer ', 'token...']
 	if(!token) return next( appError('Please login first (to get token)', 401))
 
-	const { id, iat } = verifyToken(token)
+	const { id, iat } = await verifyToken(token)
 
 	const user = await User.findById(id).select('+password')
 	if(!user) return next( appError('Please login', 404))
@@ -32,7 +33,3 @@ exports.restrictTo = (...roles) => (req, res, next) => {
 
 
 
-
-// exports.getMe = (req, res, next) => {
-
-// }

@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
-const { catchAsync, getToken, filterArrayObject, appError } = require('../util')
+const { catchAsync, getToken, filterArrayObject, appError, sendMail, verifyToken, apiFeatures } = require('../util')
 
 
 
@@ -27,7 +27,7 @@ exports.login = catchAsync( async (req, res, next) => {
 	const isVerifiedPassword = await bcrypt.compare(req.body.password, user.password)
 	if( !isVerifiedPassword ) return next( appError('did you forget your password', 404) )
 
-	const token = getToken(user.userId)
+	const token = getToken(user.id)
 
 	res.status(200).json({
 		status: 'success',
@@ -39,7 +39,13 @@ exports.login = catchAsync( async (req, res, next) => {
 
 // router.route('/').get(authController.protect, authController.restrictTo('admin'), userController.getAllUsers)
 exports.getAllUsers = catchAsync( async (req, res, next) => {
-	const users = await User.find()
+	// const users = await User.find()
+	const users = await apiFeatures(User.find(), req.query)
+		.pagination()
+		.sort()
+		.search()
+		.filter()
+		.query
 
 	res.status(200).json({
 		status: 'success',
@@ -109,7 +115,7 @@ exports.updateMyPassword = catchAsync( async (req, res, next) => {
 	user.passwordChangedAt = Date.now() 					// used later to checked reset password 
 	user.save({ validateBeforeSave: false })
 
-	const token = getToken(user.userId)
+	const token = await getToken(user.userId)
 
 	res.status(201).json({
 		status: 'success',
@@ -136,24 +142,44 @@ exports.removeUserById = catchAsync( async (req, res, next) => {
 
 // router.route('/forgot-password').post(userController.forgotPassword)
 exports.forgotPassword = catchAsync( async (req, res, next) => {
+	const email = req.body.email
+  if(!email) return next(appError('Please supply { "email" : "your@mail.com" }'))
 
-  const user = { name: 'riajul', age: 27 }
-  if(!user) return next(appError('No user found'))
+	const user = await User.findOne({ email })
+  if(!user) return next(appError(`The email '${email}' is not registered yet.`, 404))
 
-	res.status(201).json({
+	const tokenExpiresIn =  1000*60*10 		// => 10 min
+	const token = await getToken(user.id, tokenExpiresIn.toString()) 		// expiresIn: 'stringValue'
+	const resetRoute = `${req.protocol}://${req.get('host')}/api/users/password-reset`
+	const text = `Copy this token:"${token}" and pass in body of "PATCH ${resetRoute}"`
+
+	// send mail (require Internet to send email)
+	await sendMail({ to: email, subject: 'Reset My Password (Expires in 10 min)', text })
+
+	res.status(200).json({
 		status: 'success',
-		user: req.body
+		message: `An email is sent to '${email}' with token, which will used to reset the password`,
+		text
 	})
 })
 
 // router.route('/reset-password').patch(userController.resetPassword)
 exports.resetPassword = catchAsync( async (req, res, next) => {
-  const user = { name: 'riajul', age: 27 }
+	const { token, password, confirmPassword } = req.body
+
+	if(!token) return next(appError('No token found', 401))
+	const { id, iat } = verifyToken(token)
+
+  const user = await User.findById(id)
   if(!user) return next(appError('No user found'))
+
+  if(password !== confirmPassword ) return next(appError('confirm password not matched'))
+	user.password = password
+	user.save({ validateBeforeSave: false })
 
 	res.status(201).json({
 		status: 'success',
-		user: req.body
+		message: 'Please login with this new credentials'
 	})
 })
 
