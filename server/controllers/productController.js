@@ -20,7 +20,9 @@ exports.getAllProducts = catchAsync( async (req, res, next) => {
 
 
 exports.addProduct = catchAsync( async (req, res, next) => {
-	const product = await Product.create(req.body)
+	// const product = await Product.create(req.body)
+	const product = { ...req.body }
+	// const product = { ...req.body }
 
 	res.status(201).json({
 		status: 'success',

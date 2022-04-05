@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const jwt = require('jsonwebtoken') 				// => getToken(user.id)
 const nodemailer = require('nodemailer') 		// => sendMail({...})
 
@@ -30,9 +31,18 @@ exports.globalErrorHandler =  (err, req, res, next) => {
 	const errorMessage = err.errors && Object.entries(err.errors).map( ([key, value]) => `${key} : ${value.message}`)
 	if(err.errors) err = appError(errorMessage, '400', 'ValidationError')
 
-	// 4. handle jsonWebToken Validation
+	// 4. handle jsonWebToken ValidationError
 	const tokenMessage = 'Token is modified by someone, please login again go get fresh token'
-	if(err.name === 'JsonWebTokenError') err = appError(tokenMessage, 403, 'JsonWebTokenError')
+	if(err.name === 'JsonWebTokenError') err = appError(tokenMessage, 403, err.name)
+
+	// 5. handle jsonWebToken ExpirationError
+	const tokenExpireMessage = 'This token already expires, so please procceed with new token'
+	if(err.name === 'TokenExpiredError') err = appError(tokenExpireMessage, 400, err.name)
+
+	// 6. handle multer ValidationError
+	const fileUploadLimitMessage = 'Limit Cross of Maximum number of files upload'
+	if(err.code === 'LIMIT_UNEXPECTED_FILE') err = appError(fileUploadLimitMessage, 400, err.name)
+
 
 	res.status(err.statusCode || 500).json({
 		status: err.status || 'failed',
@@ -41,6 +51,15 @@ exports.globalErrorHandler =  (err, req, res, next) => {
 	})
 }
 
+/*
+ "status": "failed",
+    "message": "Unexpected field",
+    "error": {
+        "name": "MulterError",
+        "message": "Unexpected field",
+        "code": "LIMIT_UNEXPECTED_FILE",
+        "field": "images",
+        "storageErrors": [],*/
 
 
 // const filteredBody = filterArrayObject(req.body, ['role'], true) 		=> filter only role property
@@ -166,3 +185,9 @@ In MongoDB, the following <options> are available for use with regular expressio
     s: To allow the dot character “.” to match all characters including newline characters.
 
 */
+
+
+
+
+
+exports.getUniqueValue = () => Buffer.from(crypto.randomBytes(32), Date.now()).toString('hex')
