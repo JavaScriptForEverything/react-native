@@ -176,18 +176,4 @@ exports.apiFeatures = (Query, queryObj) => {
 }
 
 
-/*
-In MongoDB, the following <options> are available for use with regular expression:
-
-    i: To match both lower case and upper case pattern in the string.
-    m: To include ^ and $ in the pattern in the match i.e. to specifically search for ^ and $ inside the string. Without this option, these anchors match at the beginning or end of the string.
-    x: To ignore all white space characters in the $regex pattern.
-    s: To allow the dot character “.” to match all characters including newline characters.
-
-*/
-
-
-
-
-
-exports.getUniqueValue = () => Buffer.from(crypto.randomBytes(32), Date.now()).toString('hex')
+exports.getUniqueValue = (length=32) => Buffer.from(crypto.randomBytes(length), Date.now()).toString('hex')

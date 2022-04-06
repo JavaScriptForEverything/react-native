@@ -19,7 +19,10 @@ router.route('/')
 		authController.protect,
 		// middlewareController.upload('/images/products', appError).single('coverPhoto'),  			// single photo
 		// middlewareController.upload('/images/products', appError).array('images', 3),  				// array of photos
-		middlewareController.upload('/images/products', appError).fields([ 	// fields => single + array
+		/* upload.fields => upload.single() + upload.array() both in the same time, as many as we need
+		** 	. 3rd arg => true: image upload which is default, 	false:file upload
+		*/ 
+		middlewareController.upload('/images/products', appError, true ).fields([ 	
 			{ name: 'coverPhoto', maxCount: 1 },
 			{ name: 'images', maxCount: 3 },
 		]), 

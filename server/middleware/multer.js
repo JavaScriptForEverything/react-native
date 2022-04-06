@@ -46,7 +46,7 @@ router.route('/')
 */
 
 module.exports =  (path, appError, isImage=true ) =>  {
-	const storage = process.env.SHARP ? multer.memoryStorage() : multer.diskStorage({
+	const storage = isImage ? multer.memoryStorage() : multer.diskStorage({
 		destination: (req, file, cb) => cb(null, `${RESOURCE_STATIC_PATH}/${path}`) ,
 		filename: (req, file, cb) => {
 			const ext = file.mimetype.split('/')[1]
