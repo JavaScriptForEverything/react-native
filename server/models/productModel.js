@@ -34,19 +34,43 @@ const productSchema = new Schema({
 		lowercase: true,
 		// minlength: 50,
 	},
+
+
+	// coverPhoto: { type: String, default: 'images/coverPhoto.jpg' },
+	// images: [{ type: String, // default: 'images/image1.jpg' }],
+
+
 	coverPhoto: {
-		type: String,
-		default: 'images/coverPhoto.jpg'
+		public_id: { 									// unique Id
+			type: String,
+			required: true,
+			unique: true
+		},
+		name: { 											// to add image alt SEO
+			type: String,
+			required: true,
+		},
+		secure_url: { 								// url
+			type: String,
+			required: true,
+		}
 	},
 	images: [{
-		type: String,
-		// default: 'images/image1.jpg'
-	}],
+		public_id: {
+			type: String,
+			required: true,
+			unique: true
+		},
+		name: {
+			type: String,
+			required: true,
+		},
+		secure_url: {
+			type: String,
+			required: true,
+		}
+	}]
 
-	// reviews: {
-	// 	type: Schema.Types.ObjectId
-	// 	ref: 'User'
-	// }
 
 
 }, {

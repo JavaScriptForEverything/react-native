@@ -1,6 +1,12 @@
+const path = require('path')
 const express = require('express')
 const cors = require('cors')
-const path = require('path')
+const mongoSanitize = require('express-mongo-sanitize')   // NoSQL inject malicious code
+const xss = require('xss-clean')  	                      // Remove <tags> entities, .js use as string not script
+const rateLimit = require('express-rate-limit')           // limit number of reqest per user per hour
+const helmet = require('helmet') 	                        // Add some secrirty option in response heading
+const hpp = require('hpp')    // (HTTP Paramiter Polution) 	: Remove Duplicate field name, in query
+
 const { globalErrorHandler } = require('./util')
 
 const productRouter = require('./routes/productRoute')
@@ -14,7 +20,19 @@ const app = express()
 const RESOURCE_STATIC_PATH = process.env.RESOURCE_STATIC_PATH   // => static
 const STATIC_PATH = express.static(path.join(__dirname, RESOURCE_STATIC_PATH))
 
-// middlewares
+
+// Security section
+app.use( helmet() ) 							          // put it in the very begining, so that every request pass through it.
+app.use(mongoSanitize())                    // => { "$gt" : "" } 	=> { "gt" : ""}
+app.use(xss())  										        // <div>... 				=> &gt;div$lt;
+app.use(hpp())  									          // ?sort='name'&sor='age' 	=> ?sort='age'  								|
+app.use( '/api', rateLimit({ 
+  max 			: 100, 
+  windowMs 	: 1000 * 60 * 60,
+  message 	: 'reached max limit' 
+}))
+
+
 /* multer : Before Add Multer Set Static Directory To Access The Resources
 **  . dest: '/static/images/products/
 **  . http://localhost:5000/static/images/products/coverPhoto.jpg
@@ -23,8 +41,7 @@ const STATIC_PATH = express.static(path.join(__dirname, RESOURCE_STATIC_PATH))
 */ 
 app.use(`/${RESOURCE_STATIC_PATH}`, STATIC_PATH)  // => set Static dir to used by client-side
 app.use(cors()) 														// => allow Cross Origin Resourcw Sharing
-app.use(express.json({ limit: '10kb' })) 		// => allow: req.body & limit data upto 20kb
-
+app.use(express.json({ limit: '20kb' })) 		// => limit not working
 
 // routers
 app.use('/api/products', productRouter)     // => /api/products

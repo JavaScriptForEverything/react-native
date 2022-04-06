@@ -2,6 +2,9 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
 const { catchAsync, getToken, filterArrayObject, appError, sendMail, verifyToken, apiFeatures } = require('../util')
 
+const factoryHandler = require('./factoryHandler')
+
+exports.getAllUsers = factoryHandler.getAll(User, 'users')
 
 
 // router.route('/signup').post(userController.signup)
@@ -37,22 +40,21 @@ exports.login = catchAsync( async (req, res, next) => {
 
 
 
-// router.route('/').get(authController.protect, authController.restrictTo('admin'), userController.getAllUsers)
-exports.getAllUsers = catchAsync( async (req, res, next) => {
-	// const users = await User.find()
-	const users = await apiFeatures(User.find(), req.query)
-		.pagination()
-		.sort()
-		.search()
-		.filter()
-		.query
+// // router.route('/').get(authController.protect, authController.restrictTo('admin'), userController.getAllUsers)
+// exports.getAllUsers = catchAsync( async (req, res, next) => {
+// 	const users = await apiFeatures(User.find(), req.query)
+// 		.pagination()
+// 		.sort()
+// 		.search()
+// 		.filter()
+// 		.query
 
-	res.status(200).json({
-		status: 'success',
-		total: users.length,
-		users
-	})
-})
+// 	res.status(200).json({
+// 		status: 'success',
+// 		total: users.length,
+// 		users
+// 	})
+// })
 
 
 // Route-1: router.route('/:userId').get(userController.getUserById)
@@ -63,6 +65,7 @@ exports.getUserById = catchAsync( async (req, res, next) => {
 
 	const userId = req.user?.userId || req.params.userId
 	const user = await User.findById(userId)
+	if(!user) return next(appError('No user found', 404))
 
 	res.status(200).json({
 		status: 'success',
@@ -71,24 +74,25 @@ exports.getUserById = catchAsync( async (req, res, next) => {
 })
 
 
-// Route-1: router.route('/:userId').patch(userController.updateUserById)
-// Route-2: router.route('/me').patch(authController.protect, userController.updateUserById)
-exports.updateUserById = catchAsync( async (req, res, next) => {
-	if(req.body.password) return next(appError('Please update password, by "update-my-password" route', 403))
+exports.updateUserById = factoryHandler.updateById(User, 'user')
+// // Route-1: router.route('/:userId').patch(userController.updateUserById)
+// // Route-2: router.route('/me').patch(authController.protect, userController.updateUserById)
+// exports.updateUserById = catchAsync( async (req, res, next) => {
+// 	if(req.body.password) return next(appError('Please update password, by "update-my-password" route', 403))
 
-	const filteredBody = filterArrayObject(req.body, ['role', 'password'])
+// 	const filteredBody = filterArrayObject(req.body, ['role', 'password'])
 
-	/* 	req.user.userId  		= means this route must pass after protect middleware
-			req.params.userId  	= /api/users/:userId 		: userId must supply in url */
+// 	/* 	req.user.userId  		= means this route must pass after protect middleware
+// 			req.params.userId  	= /api/users/:userId 		: userId must supply in url */
 
-	const userId = req.user?.userId || req.params.userId
-	const user = await User.findByIdAndUpdate(userId, filteredBody, { new: true, runValidators: true })
+// 	const userId = req.user?.userId || req.params.userId
+// 	const user = await User.findByIdAndUpdate(userId, filteredBody, { new: true, runValidators: true })
 
-	res.status(201).json({
-		status: 'success',
-		user
-	})
-})
+// 	res.status(201).json({
+// 		status: 'success',
+// 		user
+// 	})
+// })
 
 
 
@@ -115,28 +119,30 @@ exports.updateMyPassword = catchAsync( async (req, res, next) => {
 	user.passwordChangedAt = Date.now() 					// used later to checked reset password 
 	user.save({ validateBeforeSave: false })
 
-	const token = await getToken(user.userId)
+	// instead check password updated or not in protect middleware
+	// const token = getToken(user.userId) 	// remove update token script from postman > test
 
 	res.status(201).json({
 		status: 'success',
 		message: 'password updated successfully, please re-login',
-		token
+		// token
 	})
 })
 
 
 
+exports.removeUserById = factoryHandler.removeById(User, 'user')
 
-// Route-1: router.route('/:userId').delete(userController.removeUserById)
-// Route-2 :router.route('/me') .delete(authController.protect, userController.removeUserById)
-exports.removeUserById = catchAsync( async (req, res, next) => {
-	const userId = req.user?.userId || req.params.userId
+// // Route-1: router.route('/:userId').delete(userController.removeUserById)
+// // Route-2 :router.route('/me') .delete(authController.protect, userController.removeUserById)
+// exports.removeUserById = catchAsync( async (req, res, next) => {
+// 	const userId = req.user?.userId || req.params.userId
 
-  const user = await User.findByIdAndDelete(userId)
-  if(!user) return next(appError('Can not delete this user'))
+//   const user = await User.findByIdAndDelete(userId)
+//   if(!user) return next(appError('Can not delete this user'))
 
-  res.status(204).send()
-})
+//   res.status(204).send()
+// })
 
 
 
@@ -149,7 +155,7 @@ exports.forgotPassword = catchAsync( async (req, res, next) => {
   if(!user) return next(appError(`The email '${email}' is not registered yet.`, 404))
 
 	const tokenExpiresIn =  1000*60*10 		// => 10 min
-	const token = await getToken(user.id, tokenExpiresIn.toString()) 		// expiresIn: 'stringValue'
+	const token = getToken(user.id, tokenExpiresIn.toString()) 		// expiresIn: 'stringValue'
 	const resetRoute = `${req.protocol}://${req.get('host')}/api/users/password-reset`
 	const text = `Copy this token:"${token}" and pass in body of "PATCH ${resetRoute}"`
 
@@ -159,7 +165,9 @@ exports.forgotPassword = catchAsync( async (req, res, next) => {
 	res.status(200).json({
 		status: 'success',
 		message: `An email is sent to '${email}' with token, which will used to reset the password`,
-		text
+
+		// only for development perpose must remove in production
+		text: process.env.Node_ENV === 'production' ? undefined : text
 	})
 })
 

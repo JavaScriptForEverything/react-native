@@ -8,14 +8,14 @@ const handleImage = async (req, file, destination, quality=100) => {
 		const ext = file.mimetype.split('/')[1]
 		const userId = req.user?.id  || 'admin'		// used after protect middleware to get user.id
 		const filename = `${file.fieldname}-${userId}-${getUniqueValue(6)}.${ext}`
-		const path = `${destination}/${filename}`
+		const secure_url = `${destination}/${filename}`
 
 		await sharp(file.buffer)
 			.resize(200, 300) 			// width, height
 			.toFormat('jpeg').jpeg({ quality })
-			.toFile(path)
+			.toFile(secure_url)
 
-		return { public_id: getUniqueValue(), name: file.originalname, path }
+		return { public_id: getUniqueValue(), name: file.originalname, secure_url }
 
 	} catch (err) {
 		console.log(err)

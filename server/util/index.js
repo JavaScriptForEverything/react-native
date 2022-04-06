@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken') 				// => getToken(user.id)
 const nodemailer = require('nodemailer') 		// => sendMail({...})
@@ -177,3 +179,15 @@ exports.apiFeatures = (Query, queryObj) => {
 
 
 exports.getUniqueValue = (length=32) => Buffer.from(crypto.randomBytes(length), Date.now()).toString('hex')
+
+
+
+
+// exports.deleteFile = (next, ...destination) => {
+// 		const file = path.resolve(__dirname, ...destination)
+
+// 		fs.unlink(file, (err) => {
+// 			err.message
+// 		})
+
+// }
