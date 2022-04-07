@@ -1,5 +1,3 @@
-const fs = require('fs')
-const path = require('path')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken') 				// => getToken(user.id)
 const nodemailer = require('nodemailer') 		// => sendMail({...})
@@ -66,6 +64,7 @@ exports.globalErrorHandler =  (err, req, res, next) => {
 
 // const filteredBody = filterArrayObject(req.body, ['role'], true) 		=> filter only role property
 // const filteredBody = filterArrayObject(req.body, ['pass'], false) 		=> allow 	only pass property
+// const filteredBody = filterArrayObject(req.body, Object.keys(obj), false) => filter 1st obj by 2nd obj
 exports.filterArrayObject = filterArrayObject = (obj, arr, isAlter=true) => {
 	if(!obj || !arr) return console.log('(allowedArrayObject) function need 2 argument, arg1: {}, and arg2: []')
 
@@ -182,12 +181,3 @@ exports.getUniqueValue = (length=32) => Buffer.from(crypto.randomBytes(length), 
 
 
 
-
-// exports.deleteFile = (next, ...destination) => {
-// 		const file = path.resolve(__dirname, ...destination)
-
-// 		fs.unlink(file, (err) => {
-// 			err.message
-// 		})
-
-// }

@@ -8,7 +8,7 @@
 	. protected routes: some only by admin and other for regular user, and guest has limited access.
 	. reset password by email
 	. API Features : search, pagination, filter documents
-	. image upload
+	. image and file upload + resize image with multer and sharp package
 
 
 ##### Frontend
