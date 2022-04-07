@@ -1,30 +1,20 @@
-import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, View } from 'react-native'
-import { Text, Button } from 'react-native-paper'
+import { StyleSheet, View, Text } from 'react-native'
+import { useSelector } from 'react-redux'
 
-// import Layout from '../../layout'
-
-const Home = () => {
-	const navigation = useNavigation()
-
-	const pressHandler = () => {
-		navigation.navigate('Details')
-	}
-
+const HomeScreen = ( props) => {
+	const { products } = useSelector( state => state.product )
+	console.log(products)
 
 	return (
 		<View>
-			<Text>Home</Text>
-			<Button
-				mode='outlined'
-				onPress={pressHandler}
-			>Product Details </Button>
+			<Text>Home Screen</Text>
+			<Text>Home Screen</Text>
+			<Text>Home Screen</Text>
 		</View>
 	)
 }
-export default Home
+export default HomeScreen
 
 const styles = StyleSheet.create({
 
 })
-
