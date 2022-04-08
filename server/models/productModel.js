@@ -1,4 +1,5 @@
 const { Schema, models, model } = require('mongoose')
+const { calculateAvarageFromArrayObject } = require('../util')
 
 
 const productSchema = new Schema({
@@ -89,8 +90,15 @@ productSchema.virtual('reviews', {
 
 // Step-3: Populate Reviews from Review._id
 productSchema.pre(/find*/, function() {
-	// this.populate('reviews', '-__v -createdAt -updatedAt')
+	this.populate('reviews', '-__v -createdAt -updatedAt')
 })
+
+// calculat avarage rating from virtual property 'reviews' and saved into another virtual property
+productSchema.virtual('totalReview').get(function () {
+	return calculateAvarageFromArrayObject(this.reviews, 'rating')
+})
+
+
 
 module.exports =  models.Product || model('Product', productSchema)
 

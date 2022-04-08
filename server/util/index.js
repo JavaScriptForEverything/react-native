@@ -181,3 +181,38 @@ exports.getUniqueValue = (length=32) => Buffer.from(crypto.randomBytes(length), 
 
 
 
+/* 	const reviews = [{ rating: 5 }, { rating: 4 }, { rating: 3 }, ]
+** calculateAvarageFromArrayObject(reviews, 'rating') 			// => 4
+
+	exports.calculateAvarageFromArrayObject = (arrObj, field) => {
+		const ratings = Object.values(arrObj).map(review => review[field])
+		const totalRatings = ratings.reduce((total, rating) => total + rating)
+		const avarageRating = totalRatings / ratings.length
+
+		return avarageRating
+	}
+*/
+exports.calculateAvarageFromArrayObject = (arrObj, field) => {
+	// 1. check args are not empty
+	if(!arrObj || !field) return console.log('required: arg1 as arrayObject and arg2 as string')
+
+	// 2. check arg1 must be array
+	if(!Array.isArray(arrObj)) return console.log('arg1 must be an array object')
+
+	// 3. check arg1 is not empty array
+	if(arrObj.length < 1) return console.log('arg1 is empty array')
+
+	// 4. check array item is an object
+	const isObject = arrObj.every(item => item.constructor === Object)
+	if( !isObject ) return console.log(`array item must be an object with property of "${field}"`)
+
+
+	// 5. if any object array object, not have field property just ignore that item
+	let ratings = Object.values(arrObj)?.map(review => review[field] )
+	    ratings = ratings.filter(Boolean)
+
+	const totalRatings = ratings?.reduce((total, rating) => total + rating, 0)
+	const avarageRating = totalRatings / ratings.length
+
+	return avarageRating
+}
