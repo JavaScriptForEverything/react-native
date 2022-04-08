@@ -23,8 +23,7 @@ exports.protect = catchAsync( async (req, res, next) => {
 	let tokenTime = iat * 1000 								// => in second so convert to miliSeconds, because updateTime in miliSeconds
 
 	// old token time alway less, than later update password time. because time increase in every moment
-	const isPasswordChangedAfterLogin = tokenTime < updateTime
-	if(isPasswordChangedAfterLogin) return next(appError('Please relogin, password changed', 403))
+	if(tokenTime < updateTime) return next(appError('Please re-login, you recently changed password ', 403))
 
 	req.user = user 									// used to pass user to next middleware to .restrictTo('admin')
 	req.user.userId = req.user.id 		// so that we can use user.userId every where. else mergeParams create confusion

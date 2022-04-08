@@ -182,7 +182,8 @@ exports.resetPassword = catchAsync( async (req, res, next) => {
   if(!user) return next(appError('No user found'))
 
   if(password !== confirmPassword ) return next(appError('confirm password not matched'))
-	user.password = password
+	user.password = password 											// this password will be bcryptjs by pre('save') hook
+	user.passwordChangedAt = new Date() 					// will use to check password changed after login or not
 	user.save({ validateBeforeSave: false })
 
 	res.status(201).json({
