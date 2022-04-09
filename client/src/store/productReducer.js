@@ -1,8 +1,7 @@
 import axios from 'axios'
+import { BASE_URL } from '@env'
 import { createSlice } from '@reduxjs/toolkit'
 import { catchAsyncDispatch, filterArrayObject } from '../util'
-
-axios.defaults.baseURL = 'http://localhost/5000/api'
 
 const { reducer, actions } = createSlice({
   name: 'product',
@@ -22,19 +21,20 @@ const { reducer, actions } = createSlice({
       ...state, 
       loading: false,           // To stop loading effect
       error: action.payload     // make sure payload data MUST BE STRING, Object throw error
+    }),
+    getAllProduct: (state, action) => ({
+      ...state,
+      loading: false,
+
+      // Method-1: Get Only required fields from HTTP respose which is JSON Object.
+      products: action.payload.products,
+      total: action.payload.total,
+
+      // Method-2: Get Every thing just in single line, but it will override old fields if conflict.
+      // ...action.payload                       // Don't Do this way, if not to override old fields
     })
-  },
-  getAllProduct: (state, action) => ({
-    ...state,
-    loading: false,
 
-    // Method-1: Get Only required fields from HTTP respose which is JSON Object.
-    products: action.payload.products,
-    total: action.payload.total,
-
-    // Method-2: Get Every thing just in single line, but it will override old fields if conflict.
-    // ...action.payload                       // Don't Do this way, if not to override old fields
-  })
+  } // End of reducers
 })
 export default reducer
 
@@ -52,8 +52,8 @@ export default reducer
 export const getProducts = ( params={} ) => catchAsyncDispatch( async (dispatch) => {
   dispatch( actions.requested() )   // enable loading effect by loading: true
 
-  const { data } = await axios.get('/products', {
+  const { data } = await axios.get(`${BASE_URL}/api/products`, {
     params: filterArrayObject(params, Object.keys(params), false)   // false: allowedFields
-  })   // axios.defaults.baseURL
+  })   
   dispatch( actions.getAllProduct(data) )
 }, actions.failed)

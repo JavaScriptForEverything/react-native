@@ -1,5 +1,4 @@
 
-
 // => const getProducts = () => async (dispatch) => { }
 // => const getProducts = () => catchAsyncDispatch( async (dispatch) => { }, actions.failed)
 export const catchAsyncDispatch = (fn, errorCallback) => (dispatch, getStore) => {
@@ -24,3 +23,4 @@ export const filterArrayObject = (obj, arr, isAlter=true) => {
 
 	return temObj
 }
+

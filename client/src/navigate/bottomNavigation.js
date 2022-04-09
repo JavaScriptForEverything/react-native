@@ -1,14 +1,15 @@
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
-import HomeScreen from '../screens/home'
+import theme from '../theme/color'
+import HomeStack from './homeStack'
 import SettingScreen from '../screens/settings'
 import ShoppingScreen from "../screens/shopping"
 import UserScreen from '../screens/user'
 
 const tabItems = [
-  { name: 'Home', Component: HomeScreen, icon: 'home' },
-  { name: 'Settings', Component: SettingScreen, icon: 'cog' },
+  { name: 'Home', Component: HomeStack, icon: 'home' },
+  { name: 'Admin', Component: SettingScreen, icon: 'cog' },
   { name: 'Shopping', Component: ShoppingScreen, icon: 'cart' },
   { name: 'User', Component: UserScreen, icon: 'account' },
 ]
@@ -20,7 +21,7 @@ const BottomTabs = () => {
   return (
     <Tab.Navigator 
       initialRouteName='SettingScreen'
-      barStyle={{ backgroundColor: '#694fad' }}
+      barStyle={{ backgroundColor: theme.palette.primary.main }}
     >
       {tabItems.map(({ name, Component, icon}) => (
         <Tab.Screen key={name}

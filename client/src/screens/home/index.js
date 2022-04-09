@@ -1,20 +1,26 @@
-import { StyleSheet, View, Text } from 'react-native'
-import { useSelector } from 'react-redux'
+import { ScrollView, StyleSheet, View } from 'react-native'
+
+import Layout from '../../layout'
+import SearchBar from './searchBar'
+import Products from './product'
 
 const HomeScreen = ( props) => {
-	const { products } = useSelector( state => state.product )
-	console.log(products)
 
 	return (
-		<View>
-			<Text>Home Screen</Text>
-			<Text>Home Screen</Text>
-			<Text>Home Screen</Text>
-		</View>
+		<Layout>
+			<ScrollView>
+				<View style={styles.searchbar}>
+					<SearchBar />
+				</View>
+				<Products />
+			</ScrollView>
+		</Layout>
 	)
 }
 export default HomeScreen
 
 const styles = StyleSheet.create({
-
+	searchbar: {
+		marginBottom: 8
+	}
 })

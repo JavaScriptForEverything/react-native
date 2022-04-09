@@ -1,6 +1,16 @@
 const { Schema, models, model } = require('mongoose')
 
 const reviewSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
+  },
   review: {
     type: String,
     trim: true,
@@ -15,16 +25,17 @@ const reviewSchema = new Schema({
     max: 5,
     default: 2
   },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+  like: {
+    type: Number,
+    default: 0,
+    min: 0
   },
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
+  dislike: {
+    type: Number,
+    default: 0,
+    min: 0
   }
+
 }, {
   timestamps: true,
 })

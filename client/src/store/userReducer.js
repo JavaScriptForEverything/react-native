@@ -2,7 +2,6 @@ import axios from 'axios'
 import { createSlice } from '@reduxjs/toolkit'
 import { catchAsyncDispatch, filterArrayObject } from '../util'
 
-axios.defaults.baseURL = 'http://localhost/5000/api'
 
 const { reducer, actions } = createSlice({
   name: 'user',
@@ -52,7 +51,7 @@ export default reducer
 export const getUsers = ( params={} ) => catchAsyncDispatch( async (dispatch) => {
   dispatch( actions.requested() )   // enable loading effect by loading: true
 
-  const { data } = await axios.get('/users', {  // axios.defaults.baseURL
+  const { data } = await axios.get('/users', {  
     params: filterArrayObject(params, Object.keys(params), false)   // false: allowedFields
   })   
   dispatch( actions.getAllUsers(data) )
