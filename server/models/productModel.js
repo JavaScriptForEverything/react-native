@@ -95,7 +95,7 @@ productSchema.pre(/find*/, function() {
 
 // calculat avarage rating from virtual property 'reviews' and saved into another virtual property
 productSchema.virtual('totalReview').get(function () {
-	return calculateAvarageFromArrayObject(this.reviews, 'rating')
+	return calculateAvarageFromArrayObject(this.reviews, 'rating') || 0
 })
 
 

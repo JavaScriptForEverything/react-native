@@ -203,16 +203,16 @@ exports.calculateAvarageFromArrayObject = (arrObj, field) => {
 	if(arrObj.length < 1) return console.log('arg1 is empty array')
 
 	// 4. check array item is an object
-	const isObject = arrObj.every(item => item.constructor === Object)
+	const isObject = arrObj.every(item => typeof item === 'object')
 	if( !isObject ) return console.log(`array item must be an object with property of "${field}"`)
-
 
 	// 5. if any object array object, not have field property just ignore that item
 	let ratings = Object.values(arrObj)?.map(review => review[field] )
 	    ratings = ratings.filter(Boolean)
 
+
 	const totalRatings = ratings?.reduce((total, rating) => total + rating, 0)
 	const avarageRating = totalRatings / ratings.length
 
-	return avarageRating
+	return avarageRating.toFixed(2)
 }

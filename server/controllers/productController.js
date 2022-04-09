@@ -130,6 +130,4 @@ exports.removeProductById = async (req, res, next) => {
 
 	await deleteFiles(product)
 	res.status(204).send()
-
-
 }
