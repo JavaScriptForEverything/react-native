@@ -60,7 +60,7 @@ const SignupScreen = () => {
   return (
     <Layout>
       <ScrollView style={styles.container}>
-        <Title style={styles.title}>Login</Title>
+        <Title style={styles.title}>Sign Up</Title>
         {inputItems.map(({ name, label, icon, type }) => (
           <View key={name}>
             <TextInput

@@ -9,9 +9,11 @@ const { reducer, actions } = createSlice({
     error: '',
     token: '',
     authenticated: '',
-    isSignedUp: false,
     user: {},
     users: [],
+    isSignedUp: false,
+    forgotPasswordMessage: '',
+    resetPasswordMessage: '',
   },
   reducers: {
     requested: (state, action) => ({
@@ -51,6 +53,16 @@ const { reducer, actions } = createSlice({
       loading: false,
       user: action.payload,                     // => { data: { user }}
       authenticated: true
+    }),
+    passwordForgotten: (state, action) => ({
+      ...state,
+      loading: false,
+      forgotPasswordMessage: action.payload
+    }),
+    passwordReseted: (state, action) => ({
+      ...state,
+      loading: false,
+      resetPasswordMessage: action.payload
     })
 
 
@@ -83,6 +95,21 @@ export const signUpTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
   dispatch(actions.requested())
   const { data: { status } } = await axios().post('/api/users/signup', obj )
   dispatch(actions.signedUp( status === 'success' ))
+}, actions.failed)
+
+// /src/screens/user/forgotPassword.js     => dispatch(sendForgotPasswordRequest(fields))
+export const sendForgotPasswordRequest = (obj={}) => catchAsyncDispatch( async (dispatch) => {
+  dispatch(actions.requested())
+  const { data: { message } } = await axios().post('/api/users/forgot-password', obj )
+  dispatch(actions.passwordForgotten(message))
+}, actions.failed)
+
+
+// /src/screens/user/resetPassword.js     => dispatch(signUpTo(fields))
+export const resetPassword = (obj={}) => catchAsyncDispatch( async (dispatch) => {
+  dispatch(actions.requested())
+  const { data: { message } } = await axios().patch('/api/users/reset-password', obj )
+  dispatch(actions.passwordReseted(message))
 }, actions.failed)
 
 // /src/screens/user/login.js     => dispatch(logOnTo(fields))
