@@ -1,18 +1,14 @@
 import { StyleSheet, View, Text } from 'react-native'
 
-const ReviewComponent = ({ }) => {
-
+const Alert = () => {
   return (
     <View>
-      <View>Left</View>
-      <View>Right</View>
+      <Text>Alert Message</Text>
     </View>
   )
 }
-export default ReviewComponent
+export default Alert
 
 const styles = StyleSheet.create({
-  avatar: {
 
-  }
 })

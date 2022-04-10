@@ -6,6 +6,7 @@ const xss = require('xss-clean')  	                      // Remove <tags> entiti
 const rateLimit = require('express-rate-limit')           // limit number of reqest per user per hour
 const helmet = require('helmet') 	                        // Add some secrirty option in response heading
 const hpp = require('hpp')    // (HTTP Paramiter Polution) 	: Remove Duplicate field name, in query
+const morgan = require('morgan')                          // For texting is Request coming or not
 
 const { globalErrorHandler } = require('./util')
 
@@ -42,6 +43,10 @@ app.use( '/api', rateLimit({
 app.use(`/${RESOURCE_STATIC_PATH}`, STATIC_PATH)  // => set Static dir to used by client-side
 app.use(cors()) 														// => allow Cross Origin Resourcw Sharing
 app.use(express.json({ limit: '20kb' })) 		// => limit not working
+
+
+app.use(morgan('dev'))                      // => To indicate is requested or not with statusCode ...
+
 
 // routers
 app.use('/api/products', productRouter)     // => /api/products

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BASE_URL } from '@env'
-import { StyleSheet, ScrollView, Text, Image, View, TouchableOpacity } from 'react-native'
-import { Avatar, List, Subheading, Title, Button } from 'react-native-paper'
+import { StyleSheet, ScrollView, Image, View, TouchableOpacity } from 'react-native'
+import { Avatar, Text, List, Subheading, Title, Button } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import Rating from '../../components/rating'

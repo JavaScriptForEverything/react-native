@@ -3,15 +3,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import theme from '../theme/color'
 import HomeStack from './homeStack'
-import SettingScreen from '../screens/settings'
+import AdminScreen from '../screens/admin'
 import ShoppingScreen from "../screens/shopping"
-import UserScreen from '../screens/user'
+import UserStack from './userStack'
 
 const tabItems = [
   { name: 'Home', Component: HomeStack, icon: 'home' },
-  { name: 'Admin', Component: SettingScreen, icon: 'cog' },
+  { name: 'Admin', Component: AdminScreen, icon: 'cog' },
   { name: 'Shopping', Component: ShoppingScreen, icon: 'cart' },
-  { name: 'User', Component: UserScreen, icon: 'account' },
+  { name: 'User', Component: UserStack, icon: 'account' },
 ]
 
 const Tab = createMaterialBottomTabNavigator()

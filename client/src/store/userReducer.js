@@ -1,15 +1,17 @@
-import axios from 'axios'
+// import axios from 'axios'
 import { createSlice } from '@reduxjs/toolkit'
-import { catchAsyncDispatch, filterArrayObject } from '../util'
-
+import { axios, catchAsyncDispatch, filterArrayObject } from '../util'
 
 const { reducer, actions } = createSlice({
   name: 'user',
   initialState: {
     loading: false,
     error: '',
+    token: '',
+    authenticated: '',
+    isSignedUp: false,
+    user: {},
     users: [],
-    user: {}
   },
   reducers: {
     requested: (state, action) => ({
@@ -21,19 +23,38 @@ const { reducer, actions } = createSlice({
       ...state, 
       loading: false,           // To stop loading effect
       error: action.payload     // make sure payload data MUST BE STRING, Object throw error
+    }),
+    getAllUsers: (state, action) => ({
+      ...state,
+      loading: false,
+
+      // Method-1: Get Only required fields from HTTP respose which is JSON Object.
+      users: action.payload.users,
+      total: action.payload.total,
+
+      // Method-2: Get Every thing just in single line, but it will override old fields if conflict.
+      // ...action.payload                       // Don't Do this way, if not to override old fields
+    }),
+
+    signedUp: (state, action) => ({
+      ...state,
+      loading: false,
+      isSignedUp: action.payload,                // => { data: { status === 'success }}
+    }),
+    logedIn: (state, action) => ({
+      ...state,
+      loading: false,
+      token: action.payload,                     // => { data: { token }}
+    }),
+    userGot: (state, action) => ({
+      ...state,
+      loading: false,
+      user: action.payload,                     // => { data: { user }}
+      authenticated: true
     })
-  },
-  getAllUsers: (state, action) => ({
-    ...state,
-    loading: false,
 
-    // Method-1: Get Only required fields from HTTP respose which is JSON Object.
-    users: action.payload.users,
-    total: action.payload.total,
 
-    // Method-2: Get Every thing just in single line, but it will override old fields if conflict.
-    // ...action.payload                       // Don't Do this way, if not to override old fields
-  })
+  },  // end of reducers
 })
 export default reducer
 
@@ -48,11 +69,34 @@ export default reducer
 **   
 ** Used inside file:
 */ 
-export const getUsers = ( params={} ) => catchAsyncDispatch( async (dispatch) => {
-  dispatch( actions.requested() )   // enable loading effect by loading: true
+// export const getUsers = ( params={} ) => catchAsyncDispatch( async (dispatch) => {
+//   dispatch( actions.requested() )   // enable loading effect by loading: true
 
-  const { data } = await axios.get('/users', {  
-    params: filterArrayObject(params, Object.keys(params), false)   // false: allowedFields
-  })   
-  dispatch( actions.getAllUsers(data) )
+//   const { data } = await axios.get('/users', {
+//     params: filterArrayObject(params, Object.keys(params), false)   // false: allowedFields
+//   })
+//   dispatch( actions.getAllUsers(data) )
+// }, actions.failed)
+
+// /src/screens/user/signup.js     => dispatch(signUpTo(fields))
+export const signUpTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
+  dispatch(actions.requested())
+  const { data: { status } } = await axios().post('/api/users/signup', obj )
+  dispatch(actions.signedUp( status === 'success' ))
+}, actions.failed)
+
+// /src/screens/user/login.js     => dispatch(logOnTo(fields))
+export const logOnTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
+  dispatch(actions.requested())
+  const { data: { token } } = await axios().post('/api/users/login', obj )
+  dispatch(actions.logedIn( token ))
+}, actions.failed)
+
+
+
+// /src/screens/layout/index.js   => useEffect(() => token && dispatch(getMe(token)) , [token])
+export const getMe = (token) => catchAsyncDispatch( async (dispatch) => {
+  dispatch(actions.requested())
+  const { data: { user }} = await axios(token).get('/api/users/me')
+  dispatch(actions.userGot( user ))
 }, actions.failed)

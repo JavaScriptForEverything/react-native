@@ -1,7 +1,5 @@
-import axios from 'axios'
-import { BASE_URL } from '@env'
 import { createSlice } from '@reduxjs/toolkit'
-import { catchAsyncDispatch, filterArrayObject } from '../util'
+import { axios, catchAsyncDispatch, filterArrayObject } from '../util'
 
 const { reducer, actions } = createSlice({
   name: 'product',
@@ -52,7 +50,7 @@ export default reducer
 export const getProducts = ( params={} ) => catchAsyncDispatch( async (dispatch) => {
   dispatch( actions.requested() )   // enable loading effect by loading: true
 
-  const { data } = await axios.get(`${BASE_URL}/api/products`, {
+  const { data } = await axios().get('/api/products', {
     params: filterArrayObject(params, Object.keys(params), false)   // false: allowedFields
   })   
   dispatch( actions.getAllProduct(data) )

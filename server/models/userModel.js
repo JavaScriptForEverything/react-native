@@ -39,7 +39,20 @@ const userSchema = new Schema({
 	},
 	passwordChangedAt: Date, 						// used to check passed changed or not
 		
-
+	avatar: {
+		public_id: { 									// unique Id
+			type: String,
+			default: Math.floor(Math.random() * 1000000000000).toString(32)
+		},
+		name: { 											// to add image alt SEO
+			type: String,
+			default: 'default-user-photo'
+		},
+		secure_url: { 								// url
+			type: String,
+			default: 'static/images/users/default.jpg'
+		}
+	},
 
 }, {
 	timestamps: true
@@ -54,7 +67,6 @@ userSchema.pre('save', async function() {
 
 
 module.exports = models.User || model('User', userSchema)
-
 
 
 /*
