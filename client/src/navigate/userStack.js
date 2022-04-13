@@ -4,16 +4,19 @@ import Login from '../screens/user/login'
 import Signup from '../screens/user/signup'
 import ForgotPassword from '../screens/user/forgotPassword'
 import ResetPassword from '../screens/user/resetPassword'
-import Profile from '../screens/user/profile'
+import ProfileDrawer from './userDrawer'
+
 import Dashboard from '../screens/user/dashboard'
 
+
 const stackItems = [
+  { name: 'Profile', Component: ProfileDrawer },
   { name: 'Login', Component: Login },
   { name: 'Signup', Component: Signup },
   { name: 'Forgot Password', Component: ForgotPassword },
   { name: 'Reset Password', Component: ResetPassword },
 
-  { name: 'Profile', Component: Profile },
+  // { name: 'Profile', Component: ProfileDrawer },
   { name: 'Dashboard', Component: Dashboard },
 ]
 
@@ -22,7 +25,7 @@ const Stack = createStackNavigator()
 const UserStack = () => {
   return (
     <Stack.Navigator
-      // initialRouteName='Signup'
+      // initialRouteName='Profile'
     >
       {stackItems.map(({ name, Component }) => (
         <Stack.Screen key={name}

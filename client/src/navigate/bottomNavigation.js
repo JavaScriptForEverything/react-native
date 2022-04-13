@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
@@ -6,13 +7,13 @@ import HomeStack from './homeStack'
 import AdminScreen from '../screens/admin'
 import ShoppingScreen from "../screens/shopping"
 import UserStack from './userStack'
-import { useSelector } from 'react-redux'
 
 const tabItems = [
+  { name: 'User', Component: UserStack, icon: 'account' },
   { name: 'Home', Component: HomeStack, icon: 'home' },
   { name: 'Admin', Component: AdminScreen, icon: 'cog' },
   { name: 'Shopping', Component: ShoppingScreen, icon: 'cart' },
-  { name: 'User', Component: UserStack, icon: 'account' },
+  // { name: 'User', Component: UserStack, icon: 'account' },
 ]
 
 const Tab = createMaterialBottomTabNavigator()
@@ -20,12 +21,12 @@ const Tab = createMaterialBottomTabNavigator()
 const BottomTabs = () => {
   const { user } = useSelector( state => state.user )
 
-  console.log(user.role)
+  console.log('bottomNavigation.js: ', user.role)
 
 
   return (
     <Tab.Navigator 
-      initialRouteName='SettingScreen'
+      // initialRouteName='UserStack'
       barStyle={{ backgroundColor: theme.palette.primary.main }}
     >
       {tabItems

@@ -27,7 +27,10 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if(error) console.log(error)
-    if(authenticated) navigation.navigate('Profile', { user })
+    if(authenticated) {
+      // navigation.navigate('Profile', { user })
+      navigation.navigate('Profile')
+    }
   }, [error, authenticated, user])
 
   const signupHandler = () => navigation.navigate('Signup')
@@ -42,7 +45,6 @@ const LoginScreen = () => {
   }
   const submitHandler = () => {
     if( !formValidator(fields, setFieldsError)) return
-
     dispatch(logOnTo(fields))
     // console.log(fields)
   }

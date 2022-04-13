@@ -39,6 +39,7 @@ const userSchema = new Schema({
 	},
 	passwordChangedAt: Date, 						// used to check passed changed or not
 		
+
 	avatar: {
 		public_id: { 									// unique Id
 			type: String,
@@ -53,6 +54,7 @@ const userSchema = new Schema({
 			default: 'static/images/users/default.jpg'
 		}
 	},
+	phone: String
 
 }, {
 	timestamps: true

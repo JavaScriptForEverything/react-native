@@ -15,3 +15,14 @@
 	. React-Native
 	. React-Native-Paper
 	. @React-navigation 	: native | stack | drawer | material-bottom-tabs | material-top-tabs
+
+	. login signup forgot-password reset-password, userProfile & protected admin panel
+
+
+##### Key features
+	. Navigation
+	. Form Validation
+	. Both Client-Side and Server-Side protected routes
+	. image resize and only upload if request success
+	. comments on every product, and reviews shows on related product
+	. Clean and Re-usable code.
