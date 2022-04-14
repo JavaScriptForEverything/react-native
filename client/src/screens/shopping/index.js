@@ -1,12 +1,14 @@
 import { StyleSheet, View, Text } from 'react-native'
 
+import Layout from '../../layout'
+
 const ShoppingScreen = ( props) => {
 	return (
-		<View>
-			<Text>SettingScreen Screen</Text>
-			<Text>ShoppingScreen Screen</Text>
-			<Text>ShoppingScreen Screen</Text>
-		</View>
+		<Layout>
+			<View>
+				<Text>ShoppingScreen Screen</Text>
+			</View>
+		</Layout>
 	)
 }
 export default ShoppingScreen

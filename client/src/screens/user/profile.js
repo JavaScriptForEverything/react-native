@@ -1,91 +1,56 @@
-import { useSelector } from 'react-redux'
-import { BASE_URL } from '@env'
-import { useNavigation } from '@react-navigation/native'
-import { useDrawerStatus } from '@react-navigation/drawer'
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
-import { Avatar, Badge, Button, Divider, List, Surface, Title } from 'react-native-paper'
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native'
+import { List, Divider, Text, Button } from 'react-native-paper'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
-import Layout from '../../layout'
+import { BASE_URL } from '@env'
 import theme from '../../theme/color'
 
-const listItems = [
-  { icon: 'account', title: 'New Group' },
-  { icon: 'account-box', title: 'Contact' },
-  { icon: 'phone', title: 'Calls' },
+const productItems = [
+  { title: 'product name 1', image: 'static/images/users/default.jpg' },
+  { title: 'product name 2', image: 'static/images/users/default.jpg' },
+  { title: 'product name 3', image: 'static/images/users/default.jpg' },
+  { title: 'product name 4', image: 'static/images/users/default.jpg' },
 ]
 
 const ProfileScreen = () => {
-  const navigation = useNavigation()
-  const isOpen = useDrawerStatus()
-  const { user } = useSelector( state => state.user )
 
-  // console.log(isOpen)
-  // console.log(user.avatar.secure_url)
-  
-  const listItemHandler = (index) => () => {
+  const deleteIconHandler = (index) => () => {
     console.log({ index })
   }
 
+  console.log(`${BASE_URL}/static/images/users/default.jpg`)
+
   return (
-    <Layout isStack={true}>
-      <View style={styles.cover}>
-        <Avatar.Image 
-          source={{ uri: `${BASE_URL}/${user.avatar?.secure_url}` }} 
-          size={84}
-        />
-
-        <List.Accordion
-          title='riajul islam'
-          description='01957500605'
-          style={styles.cover}
-          titleStyle={styles.username}
-          descriptionStyle={styles.phone}
-        >
-          <List.Item 
-            title='riajul islam'
-            description='01957500605'
-            style={styles.accordionChild}
+    <View>
+      {productItems.map(({ title, image }, index) => (
+        <View key={title}>
+          <List.Item
+            title={title}
+            // left={props => <List.Icon {...props} icon='account' />}
+            left={props => <Image {...props} 
+              source={{ uri: `${BASE_URL}/${image}` }} 
+              style={{ width: 50, height: 50 }}
+            />}
+            right={props => (
+              <List.Section>
+                <TouchableOpacity onPress={deleteIconHandler(index)}>
+                  <MaterialCommunityIcons {...props} name='delete-outline' size={24} />
+                </TouchableOpacity>
+              </List.Section>
+            )}
           />
-        </List.Accordion>
-      </View>
-
-
-      <Surface>
-        {listItems.map(({ title, icon }, index) => (
-          <TouchableOpacity key={title} onPress={listItemHandler(index)}>
-            <List.Item
-              title={title}
-              left={(props) => <List.Icon {...props} icon={icon} />}
-              right={(props) => (
-                <Badge visible={!!index} size={24} style={styles.badgeStyle}> {index} </Badge>
-              )}
-            />
-          </TouchableOpacity>
-        ))}
-      </Surface>
-    </Layout>
+          <Divider style={styles.divider} />
+        </View>
+      ))}
+      
+    </View>
   )
 }
 export default ProfileScreen
 
 const styles = StyleSheet.create({
-  cover: {
-    backgroundColor: theme.palette.primary.main,
-    paddingTop: 16,
-    // color: 'white',
-  },
-  username: {
-    textTransform: 'capitalize',
-    color: 'white'
-  },
-  phone: {
-    color: 'rgba(255, 255, 255, .7)'
-  },
-  accordionChild: {
-    backgroundColor: 'white'
-  },
-  badgeStyle: {
-    backgroundColor: theme.palette.primary.light,
-    color: theme.palette.primary.contrastText,
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey[300]
   }
 })

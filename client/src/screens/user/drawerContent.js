@@ -1,30 +1,97 @@
 import { useSelector } from 'react-redux'
-import { StyleSheet, View } from 'react-native'
-import { Button, Text } from 'react-native-paper'
-import Layout from '../../layout'
+import { BASE_URL } from '@env'
+import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { Avatar, Badge, Divider, List, Surface } from 'react-native-paper'
 
+import Layout from '../../layout'
+import theme from '../../theme/color'
+
+const listItems = [
+  { icon: 'account', title: 'About Me' },
+  { icon: 'account-box', title: 'Contact Us' },
+  { icon: 'help', title: 'Help' },
+]
 
 const DrawerContent = () => {
+  const navigation = useNavigation()
   const { user } = useSelector( state => state.user )
 
-  // console.log({ token: user.token })
   // console.log(user.avatar.secure_url)
-
-  const logoutHandler = () => {
-    console.log('Logout')
+  
+  const listItemHandler = (title) => () => {
+    console.log({ title })
+    navigation.navigate(title)
   }
 
   return (
-    <Layout>
-      <View>
-        <Text>Drawer updated</Text>
-        <Button onPress={logoutHandler}>Logout</Button>
+    <Layout isStack={true}>
+      <View style={styles.cover}>
+        <Avatar.Image 
+          source={{ uri: `${BASE_URL}/${user.avatar?.secure_url}` }} 
+          size={84}
+          style={styles.avatar}
+        />
+
+        <List.Accordion
+          title='riajul islam'
+          description='01957500605'
+          style={styles.cover}
+          titleStyle={styles.username}
+          descriptionStyle={styles.phone}
+        >
+          <List.Item 
+            title='riajul islam'
+            description='01957500605'
+            style={styles.accordionChild}
+          />
+        </List.Accordion>
       </View>
+
+
+      <Surface>
+        {listItems.map(({ title, icon }, index) => (
+          <TouchableOpacity key={title} onPress={listItemHandler(title)}>
+            <List.Item
+              title={title}
+              left={(props) => <List.Icon {...props} icon={icon} />}
+              right={(props) => (
+                <Badge visible={!!index} size={24} style={styles.badgeStyle}> {index} </Badge>
+              )}
+            />
+            <Divider style={{ 
+              borderBottomWidth: 1,
+              borderBottomColor: theme.palette.grey[300]
+            }} />
+          </TouchableOpacity>
+        ))}
+      </Surface>
     </Layout>
   )
 }
 export default DrawerContent
 
 const styles = StyleSheet.create({
-
+  cover: {
+    backgroundColor: theme.palette.primary.main,
+    paddingTop: 32,
+    // color: 'white',
+  },
+  avatar: {
+    marginLeft: 8
+  },
+  username: {
+    textTransform: 'capitalize',
+    color: 'white'
+  },
+  phone: {
+    color: 'rgba(255, 255, 255, .7)'
+  },
+  accordionChild: {
+    backgroundColor: 'white'
+  },
+  badgeStyle: {
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.primary.contrastText,
+  }
 })
