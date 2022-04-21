@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { BASE_URL } from '@env'
 import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native'
 import { Avatar, Badge, Divider, List, Surface } from 'react-native-paper'
 
 import Layout from '../../layout'
@@ -27,11 +27,16 @@ const DrawerContent = () => {
   return (
     <Layout isStack={true}>
       <View style={styles.cover}>
-        <Avatar.Image 
-          source={{ uri: `${BASE_URL}/${user.avatar?.secure_url}` }} 
-          size={84}
-          style={styles.avatar}
+
+      <View style={styles.profileImageContainer}>
+        <Image 
+          source={{ uri: `${BASE_URL}/static/images/avatar.png` }} 
+          // source={{ uri: `${BASE_URL}/static/images/users/default.jpg` }} 
+          // source={{ uri: `${BASE_URL}/${user.avatar?.secure_url}` }} 
+          style={styles.profileImage}
         />
+      </View>
+
 
         <List.Accordion
           title='riajul islam'
@@ -78,7 +83,20 @@ const styles = StyleSheet.create({
     // color: 'white',
   },
   avatar: {
-    marginLeft: 8
+    marginLeft: 8,
+  },
+  profileImageContainer: {
+    marginLeft: 8,
+    height: 80,
+    width: 80,
+    borderRadius: 40,
+    overflow: 'hidden',
+    // borderWidth: 1,
+    // borderColor: 'red',
+  },
+  profileImage: {
+    height: 80,
+    width: 80,
   },
   username: {
     textTransform: 'capitalize',

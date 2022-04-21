@@ -18,8 +18,6 @@ const ProfileScreen = () => {
     console.log({ index })
   }
 
-  console.log(`${BASE_URL}/static/images/users/default.jpg`)
-
   return (
     <View>
       {productItems.map(({ title, image }, index) => (

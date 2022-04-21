@@ -1,6 +1,6 @@
 import Toast from 'react-native-toast-message'
 import { useEffect } from 'react'
-import { SafeAreaView, StatusBar } from 'react-native'
+import { SafeAreaView, ScrollView, StatusBar } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { getProducts } from '../store/productReducer'
 import { useNavigation } from '@react-navigation/native'
@@ -29,7 +29,9 @@ const Layout = ({ isStack=false, children }) => {
 	
 	return (
 		<SafeAreaView style={{ marginTop: isStack ? 0 : StatusBar.currentHeight }}>
-			{ children }
+			<ScrollView showsVerticalScrollIndicator={false} >
+				{ children }
+			</ScrollView>
 			<Toast />
 		</SafeAreaView>
 	)
