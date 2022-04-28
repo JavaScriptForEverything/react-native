@@ -10,13 +10,12 @@ import Dashboard from '../screens/user/dashboard'
 
 
 const stackItems = [
-  { name: 'Profile', Component: ProfileDrawer },
   { name: 'Login', Component: Login },
   { name: 'Signup', Component: Signup },
   { name: 'Forgot Password', Component: ForgotPassword },
   { name: 'Reset Password', Component: ResetPassword },
 
-  // { name: 'Profile', Component: ProfileDrawer },
+  { name: 'Profile', Component: ProfileDrawer },
   { name: 'Dashboard', Component: Dashboard },
 ]
 

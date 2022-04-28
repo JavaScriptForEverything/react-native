@@ -19,7 +19,7 @@ const Layout = ({ isStack=false, children }) => {
 		if(!isTokenFound) return 
 		
 		dispatch(getMe(isTokenFound))
-		navigation.navigate('User Profile')
+		navigation.navigate('Profile')
 	}, [token])
 	
 	return (

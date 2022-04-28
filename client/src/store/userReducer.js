@@ -53,7 +53,13 @@ const { reducer, actions } = createSlice({
       ...state,
       loading: false,
       token: action.payload               // => { data: { token }}
-     }),
+    }),
+    logedOut: (state, action) => ({
+      ...state,
+      loading: false,
+      token: '',
+      authenticated: false
+    }),
     userGot: (state, action) => ({
       ...state,
       loading: false,
@@ -139,3 +145,10 @@ export const getMe = (token) => catchAsyncDispatch( async (dispatch) => {
   const { data: { user }} = await axios(token).get('/api/users/me')
   dispatch(actions.userGot( user ))
 }, actions.failed)
+
+
+export const logoutMe = () => async dispatch => {
+  dispatch(actions.requested())
+  dispatch(actions.logedOut())
+  await asyncStorage.removeItem('token')
+}
