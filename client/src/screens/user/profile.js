@@ -1,55 +1,52 @@
+import { useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native'
-import { List, Divider, Text, Button } from 'react-native-paper'
+import { List, Divider } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import { BASE_URL } from '@env'
 import theme from '../../theme/color'
-import { useSelector } from 'react-redux'
-import AsyncStorageLib from '@react-native-async-storage/async-storage'
 
-const productItems = [
-  { title: 'product name 1', image: 'static/images/users/default.jpg' },
-  { title: 'product name 2', image: 'static/images/users/default.jpg' },
-  { title: 'product name 3', image: 'static/images/users/default.jpg' },
-  { title: 'product name 4', image: 'static/images/users/default.jpg' },
-]
 
 const ProfileScreen = () => {
+  const navigation = useNavigation()
 
   const { user } = useSelector( state => state.user )
-  // console.log(user)
 
-  const asyncHandler = async () => {
-    // const token = await AsyncStorageLib.getItem('token')
-    // console.log({ token })
+  // console.log(user.products)
+
+  const productHandler = (product) => () => {
+    // navigation.navigate('Product Details')
+    console.log(product.name)
   }
-  asyncHandler()
 
-  const deleteIconHandler = (index) => () => {
-    console.log({ index })
+  const deleteIconHandler = (productId) => () => {
+    console.log({ productId })
   }
 
   return (
     <View>
-      {productItems.map(({ title, image }, index) => (
-        <View key={title}>
-          <List.Item
-            title={title}
-            // left={props => <List.Icon {...props} icon='account' />}
-            left={props => <Image {...props} 
-              source={{ uri: `${BASE_URL}/${image}` }} 
-              style={{ width: 50, height: 50 }}
-            />}
-            right={props => (
-              <List.Section>
-                <TouchableOpacity onPress={deleteIconHandler(index)}>
-                  <MaterialCommunityIcons {...props} name='delete-outline' size={24} />
-                </TouchableOpacity>
-              </List.Section>
-            )}
-          />
-          <Divider style={styles.divider} />
-        </View>
+      {user.products.map((product, index) => (
+        <TouchableOpacity key={product.name} onPress={productHandler(product)}>
+          <View>
+            <List.Item
+              title={product.name}
+              // left={props => <List.Icon {...props} icon='account' />}
+              left={props => <Image {...props} 
+                source={{ uri: `${BASE_URL}/${product.coverPhoto.secure_url}` }} 
+                style={{ width: 50, height: 50 }}
+              />}
+              right={props => (
+                <List.Section>
+                  <TouchableOpacity onPress={deleteIconHandler(product._id)}>
+                    <MaterialCommunityIcons {...props} name='delete-outline' size={24} />
+                  </TouchableOpacity>
+                </List.Section>
+              )}
+            />
+            <Divider style={styles.divider} />
+          </View>
+        </TouchableOpacity>
       ))}
       
     </View>
