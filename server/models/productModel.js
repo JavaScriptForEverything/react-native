@@ -3,6 +3,10 @@ const { calculateAvarageFromArrayObject } = require('../util')
 
 
 const productSchema = new Schema({
+	user: { 								// To connect user by to UserSchema, to virtually Propulate all user products
+		type: Schema.Types.ObjectId,
+		required: true,
+	},
 	name: {
 		type: String,
 		unique: true,
@@ -83,9 +87,9 @@ const productSchema = new Schema({
 
 // Step-2: Create Virtual Field & link Product._id <===> Review._id
 productSchema.virtual('reviews', { 	
-	ref: 'Review',
-	foreignField: 'product',
-	localField: '_id'
+	ref: 'Review', 											// => Review Schema Name
+	foreignField: 'product', 						// => ReviewSchema.product field name
+	localField: '_id' 									// => Current Schema's id <===> foreignField
 })
 
 // Step-3: Populate Reviews from Review._id

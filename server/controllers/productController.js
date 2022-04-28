@@ -48,7 +48,9 @@ exports.getAllProducts = factoryHandler.getAll(Product, 'products')
 
 exports.addProduct = async (req, res, next) => {
 	try {
+		req.body.user = req.user.id 			// user comes from protect middleware
 		const product = await Product.create(req.body)
+
 		if(!product) return next(appError('No product found'))
 
 		res.status(201).json({
