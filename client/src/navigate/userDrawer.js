@@ -1,4 +1,8 @@
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+
 import ProfileScreen from '../screens/user/profile'
 import DrawerContent from '../screens/user/drawerContent'
 import AboutMeScreen from '../screens/user/aboutMe'           // 1. 
@@ -16,6 +20,15 @@ const drawerItems = [
 const Drawer = createDrawerNavigator()
 
 const UserDrawer = () => {
+  const navigation = useNavigation()
+  const { token } = useSelector( state => state.user )
+
+  useEffect(() => {
+    if(!token) return navigation.navigate('Login')
+
+  }, [token])
+
+
   return (
     <Drawer.Navigator drawerContent={DrawerContent}>
       {drawerItems.map(({ name, Component}) => (

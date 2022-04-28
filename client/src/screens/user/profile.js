@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import { BASE_URL } from '@env'
 import theme from '../../theme/color'
+import { useSelector } from 'react-redux'
 
 const productItems = [
   { title: 'product name 1', image: 'static/images/users/default.jpg' },
@@ -13,6 +14,9 @@ const productItems = [
 ]
 
 const ProfileScreen = () => {
+
+  const { user } = useSelector( state => state.user )
+  console.log(user)
 
   const deleteIconHandler = (index) => () => {
     console.log({ index })

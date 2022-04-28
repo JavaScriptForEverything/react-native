@@ -9,7 +9,12 @@ const { reducer, actions } = createSlice({
     error: '',
     token: '',
     authenticated: '',
-    user: {},
+    user: {
+      avatar: {},
+      products: [],
+      images: [],
+      coverPhoto: {}
+    },
     users: [],
     isSignedUp: false,
     forgotPasswordMessage: '',

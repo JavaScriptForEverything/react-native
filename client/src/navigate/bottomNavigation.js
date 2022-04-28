@@ -21,7 +21,6 @@ const Tab = createMaterialBottomTabNavigator()
 const BottomTabs = () => {
   const { user } = useSelector( state => state.user )
 
-  console.log('bottomNavigation.js: ', user.role)
 
 
   return (
@@ -30,7 +29,7 @@ const BottomTabs = () => {
       barStyle={{ backgroundColor: theme.palette.primary.main }}
     >
       {tabItems
-        .filter(item => (user.role !== 'admin') ? (item.name !== 'Admin') : item)
+        .filter(item => (user?.role !== 'admin') ? (item.name !== 'Admin') : item)
         .map(({ name, Component, icon}) => (
         <Tab.Screen key={name}
           name={name}
