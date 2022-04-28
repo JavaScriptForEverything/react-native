@@ -28,7 +28,7 @@ exports.updateById = (Model, name) => catchAsync( async (req, res, next) => {
 	const userId = req.user?.userId || req.params[`${name}Id`]
 	const id = name === 'user' ? userId : req.params[`${name}Id`]
 
-	const filteredBody = filterArrayObject(req.body, ['role', 'password'])
+	const filteredBody = filterArrayObject(req.body, ['role', 'email', 'password'])
   if(name === 'review') {
     filteredBody.user = req.user?.userId || filteredBody.user
     filteredBody.product = req.params?.productId || filteredBody.product

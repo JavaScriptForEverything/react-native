@@ -74,9 +74,9 @@ exports.getUserById = catchAsync( async (req, res, next) => {
 })
 
 
-exports.updateUserById = factoryHandler.updateById(User, 'user')
-// // Route-1: router.route('/:userId').patch(userController.updateUserById)
-// // Route-2: router.route('/me').patch(authController.protect, userController.updateUserById)
+// exports.updateUserById = factoryHandler.updateById(User, 'user')
+// Route-1: router.route('/:userId').patch(userController.updateUserById)
+// Route-2: router.route('/me').patch(authController.protect, userController.updateUserById)
 // exports.updateUserById = catchAsync( async (req, res, next) => {
 // 	if(req.body.password) return next(appError('Please update password, by "update-my-password" route', 403))
 
@@ -95,6 +95,13 @@ exports.updateUserById = factoryHandler.updateById(User, 'user')
 // })
 
 
+exports.updateUserById = (req, res, next) => {
+
+	res.status(201).json({
+		status: 'success',
+		user: req.body
+	})
+}
 
 
 // Route-1: router.route('/update-my-password').patch(authController.protect, userController.updateMyPassword)
