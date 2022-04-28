@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { BASE_URL } from '@env'
 import theme from '../../theme/color'
 import { useSelector } from 'react-redux'
+import AsyncStorageLib from '@react-native-async-storage/async-storage'
 
 const productItems = [
   { title: 'product name 1', image: 'static/images/users/default.jpg' },
@@ -16,7 +17,13 @@ const productItems = [
 const ProfileScreen = () => {
 
   const { user } = useSelector( state => state.user )
-  console.log(user)
+  // console.log(user)
+
+  const asyncHandler = async () => {
+    // const token = await AsyncStorageLib.getItem('token')
+    // console.log({ token })
+  }
+  asyncHandler()
 
   const deleteIconHandler = (index) => () => {
     console.log({ index })

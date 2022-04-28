@@ -28,8 +28,7 @@ const LoginScreen = () => {
   useEffect(() => {
     if(error) console.log(error)
     if(authenticated) {
-      // navigation.navigate('Profile', { user })
-      navigation.navigate('Profile')
+      // navigation.navigate('Profile')
     }
   }, [error, authenticated, user])
 

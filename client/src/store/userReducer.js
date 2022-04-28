@@ -1,4 +1,5 @@
 // import axios from 'axios'
+import asyncStorage from '@react-native-async-storage/async-storage'
 import { createSlice } from '@reduxjs/toolkit'
 import { axios, catchAsyncDispatch, filterArrayObject } from '../util'
 
@@ -51,8 +52,8 @@ const { reducer, actions } = createSlice({
     logedIn: (state, action) => ({
       ...state,
       loading: false,
-      token: action.payload,                     // => { data: { token }}
-    }),
+      token: action.payload               // => { data: { token }}
+     }),
     userGot: (state, action) => ({
       ...state,
       loading: false,
@@ -122,6 +123,12 @@ export const logOnTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
   dispatch(actions.requested())
   const { data: { token } } = await axios().post('/api/users/login', obj )
   dispatch(actions.logedIn( token ))
+
+  /* asyncStorage return promise and if we try to await inside redux dispatch handler
+  ** it throw error because redux Store only handler synchronous task
+  **    - that's the reason use handle here instead of dispatch handler.  */ 
+  await asyncStorage.setItem('token', token)
+
 }, actions.failed)
 
 

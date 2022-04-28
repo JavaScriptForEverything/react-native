@@ -20,13 +20,14 @@ const drawerItems = [
 const Drawer = createDrawerNavigator()
 
 const UserDrawer = () => {
-  const navigation = useNavigation()
-  const { token } = useSelector( state => state.user )
+  // const navigation = useNavigation()
+  // const { token } = useSelector( state => state.user )
 
-  useEffect(() => {
-    if(!token) return navigation.navigate('Login')
 
-  }, [token])
+  // useEffect(() => {
+  //   if(!token) return navigation.navigate('Login')
+
+  // }, [token])
 
 
   return (

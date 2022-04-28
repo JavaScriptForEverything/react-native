@@ -5,33 +5,25 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getProducts } from '../store/productReducer'
 import { useNavigation } from '@react-navigation/native'
 import { getMe } from '../store/userReducer'
+import AsyncStorageLib from '@react-native-async-storage/async-storage'
 
 const Layout = ({ isStack=false, children }) => {
 	const dispatch = useDispatch()
-	const { token, authenticated, user } = useSelector( state => state.user )
+	const navigation = useNavigation()
+	const { token } = useSelector( state => state.user )
 
-	// const navigation = useNavigation()
-	// console.log(user, authenticated)
+	useEffect( async() => {
+		const savedToken = await AsyncStorageLib.getItem('token')
 
-	useEffect(() => {
-		// dispatch(getProducts())
-	}, [])
-
-
-	/* 	AUTHENTICATION: Here
-	** 1. GET user if token available
-	** 2. if user found push user to 'Profile' navigation Route which we define in userNavigation Stack
-	*/
-	useEffect(() => {
-		if(token) dispatch(getMe(token))
-		// if(Object.keys(user).length) 	navigation.navigate('Profile', { user })
+		const isTokenFound = token || savedToken
+		if(!isTokenFound) return 
+		
+		dispatch(getMe(isTokenFound))
+		navigation.navigate('User Profile')
 	}, [token])
 	
 	return (
-		<SafeAreaView style={{ 
-			...styles.container, 
-			marginTop: isStack ? 0 : StatusBar.currentHeight 
-		}}>
+		<SafeAreaView style={{ ...styles.container, marginTop: isStack ? 0 : StatusBar.currentHeight }}>
 				{ children }
 			<Toast />
 		</SafeAreaView>
