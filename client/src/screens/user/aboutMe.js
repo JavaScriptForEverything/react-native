@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Image, Linking } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, Image, Linking } from 'react-native'
 import { Caption, Subheading } from 'react-native-paper'
 import { BASE_URL } from '@env'
 
@@ -19,28 +19,31 @@ const AboutMe = () => {
 
   return (
     <Layout>
-      <View style={styles.profileContainer}>
-        <View style={styles.profileImageContainer}>
-          <Image 
-            source={{ uri: `${BASE_URL}/static/images/avatar.png` }} 
-            style={styles.profileImage}
-          />
+      <ScrollView showsVerticalScrollIndicator={false} >
+        <View style={styles.profileContainer}>
+          <View style={styles.profileImageContainer}>
+            <Image 
+              source={{ uri: `${BASE_URL}/static/images/avatar.png` }} 
+              style={styles.profileImage}
+            />
+          </View>
+          <Subheading style={styles.avatarTitle}>Riajul Islam</Subheading>
+          <Caption>Web Developer | App Developer</Caption>
         </View>
-        <Subheading style={styles.avatarTitle}>Riajul Islam</Subheading>
-        <Caption>Web Developer | App Developer</Caption>
-      </View>
 
-      <SocialMedia />
+        <SocialMedia />
 
-      <Text style={styles.avatarDescription}>
-        Hi, I'a <Text>Javascript programmer</Text>, which lead me to create Web application
-        and Mobile application for both android and iSO with the help of 'react-native'
-      </Text>
+        <Text style={styles.avatarDescription}>
+          Hi, I'a <Text>Javascript programmer</Text>, which lead me to create Web application
+          and Mobile application for both android and iSO with the help of 'react-native'
+        </Text>
 
-      { technologies.map(({ title, arrayObject }) => <DevelopmentStack key={title}
-        title={title}
-        arrayObject={arrayObject}
-      />)}
+        { technologies.map(({ title, arrayObject }) => <DevelopmentStack key={title}
+          title={title}
+          arrayObject={arrayObject}
+        />)}
+
+      </ScrollView>
     </Layout>
   )
 }

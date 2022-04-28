@@ -1,6 +1,6 @@
 import Toast from 'react-native-toast-message'
 import { useEffect } from 'react'
-import { SafeAreaView, ScrollView, StatusBar } from 'react-native'
+import { SafeAreaView, StyleSheet, StatusBar } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { getProducts } from '../store/productReducer'
 import { useNavigation } from '@react-navigation/native'
@@ -28,12 +28,21 @@ const Layout = ({ isStack=false, children }) => {
 	}, [token])
 	
 	return (
-		<SafeAreaView style={{ marginTop: isStack ? 0 : StatusBar.currentHeight }}>
-			<ScrollView showsVerticalScrollIndicator={false} >
+		<SafeAreaView style={{ 
+			...styles.container, 
+			marginTop: isStack ? 0 : StatusBar.currentHeight 
+		}}>
 				{ children }
-			</ScrollView>
 			<Toast />
 		</SafeAreaView>
 	)
 }
 export default Layout
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		// borderWidth: 1,
+		// borderColor: 'red',
+	}
+})

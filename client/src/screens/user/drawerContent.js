@@ -8,6 +8,7 @@ import Layout from '../../layout'
 import theme from '../../theme/color'
 
 const listItems = [
+  { icon: 'account', title: 'User Profile' },
   { icon: 'account', title: 'About Me' },
   { icon: 'account-box', title: 'Contact Us' },
   { icon: 'help', title: 'Help' },
@@ -20,8 +21,8 @@ const DrawerContent = () => {
   // console.log(user.avatar.secure_url)
   
   const listItemHandler = (title) => () => {
-    console.log({ title })
     navigation.navigate(title)
+    // console.log({ title })
   }
 
   return (
