@@ -11,7 +11,7 @@ const handleImage = async (req, file, destination, quality=100) => {
 		const secure_url = `${destination}/${filename}`
 
 		await sharp(file.buffer)
-			.resize(200, 300) 			// width, height
+			.resize(300, 100) 			// width, height
 			.toFormat('jpeg').jpeg({ quality })
 			.toFile(secure_url)
 

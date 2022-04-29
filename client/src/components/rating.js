@@ -3,7 +3,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 
 const Rating = (props) => {
-  const { color='#ffc107', value='', onPress=f=>f, disabled=false, size=24 } = props
+  const { 
+    color='#ffc107', 
+    value='', 
+    onPress=f=>f, 
+    disabled=false, 
+    size=24 
+  } = props
 
 
   return (

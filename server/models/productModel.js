@@ -40,9 +40,11 @@ const productSchema = new Schema({
 		// minlength: 50,
 	},
 
-
-	// coverPhoto: { type: String, default: 'images/coverPhoto.jpg' },
-	// images: [{ type: String, // default: 'images/image1.jpg' }],
+	categories: [{
+		type: String,
+		enum: ['shirt', 'pant', 't-shart'],
+		default: 'shirt'
+	}],
 
 
 	coverPhoto: {
@@ -100,6 +102,11 @@ productSchema.pre(/find*/, function() {
 // calculat avarage rating from virtual property 'reviews' and saved into another virtual property
 productSchema.virtual('totalReview').get(function () {
 	return calculateAvarageFromArrayObject(this.reviews, 'rating') || 0
+})
+
+// To show discount value
+productSchema.virtual('oldPrice').get(function () {
+	return this.price + (this.price * 1.1)
 })
 
 

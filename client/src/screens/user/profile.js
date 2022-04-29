@@ -16,7 +16,7 @@ const ProfileScreen = () => {
   // console.log(user.products)
 
   const productHandler = (product) => () => {
-    // navigation.navigate('Product Details')
+    navigation.navigate('Product Details', { productId: product._id })
     console.log(product.name)
   }
 
