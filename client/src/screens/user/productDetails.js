@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BASE_URL } from '@env'
-
-import { StyleSheet, View, Image } from 'react-native'
+import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { Caption, Subheading, Text, Title } from 'react-native-paper'
+import Swiper from 'react-native-swiper'
+import { BASE_URL } from '@env'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import Rating from '../../components/rating'
 import theme from '../../theme/color'
@@ -23,9 +25,10 @@ const locationCategories = [
   { icon: 'car', label: 'Hotel Pickup' },
 ]
 
-const ProductDetails = ({ route: { params: { productId } } }) => {
+const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
   // console.log({ productId })
 
+  const [ liked, setLiked ] = useState(false)
   const { user } = useSelector( state => state.user )
   const product = user.products.find( product => product._id === productId )
 
@@ -42,13 +45,34 @@ const ProductDetails = ({ route: { params: { productId } } }) => {
     console.log({ category })
   }
 
+  const backHandler = () => navigation.goBack()
+  const likePressedHandler = () => {
+    setLiked(!liked)
+    console.log('liked')
+  }
+  
+
   return (
-    <View style={styles.container}>
-      <Image 
-        source={{ uri: `${BASE_URL}/${product?.coverPhoto.secure_url}` }}
-        style={styles.coverPhoto}
-        onLoad={coverPhotoHandler}
-      />
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container} >
+
+      <View style={styles.imageContainer}>
+        <Image 
+          source={{ uri: `${BASE_URL}/${product?.coverPhoto.secure_url}` }}
+          style={styles.image}
+          onLoad={coverPhotoHandler}
+        />
+
+        <View style={styles.imageHeartContainer}>
+          <TouchableOpacity onPress={backHandler} style={styles.backContainer}>
+            <MaterialCommunityIcons name='arrow-left-bold-outline' size={24} />
+            <Text>Back</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={likePressedHandler}>
+            <MaterialCommunityIcons name={ liked ? 'heart' : 'heart-outline' } size={24} color='#f60000' />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <View style={styles.imageTitleContainer}>
         <View style={styles.imageTitleContainerLeft}>
@@ -62,6 +86,7 @@ const ProductDetails = ({ route: { params: { productId } } }) => {
             />
             <Text style={styles.ratingReview}>{2} ( Reviews )</Text>
           </View>
+
         </View>
 
         <View style={styles.imageTitleContainerRight}>
@@ -91,7 +116,22 @@ const ProductDetails = ({ route: { params: { productId } } }) => {
         // iconColor='dodgerblue'
       />
 
-    </View>
+      <Swiper height='100%' >
+        {product.images.map(image => (
+          <Image 
+            key={image.name}
+            source={{ uri: `${BASE_URL}/${image?.secure_url}` }}
+            style={styles.image}
+          />
+        ))}
+      </Swiper>
+
+      <View style={styles.descriptionContainer}>
+        <Subheading style={styles.subheading}>Product Description:</Subheading>
+        <Text style={styles.description}>{product.description}</Text>
+      </View>
+
+    </ScrollView>
   )
 }
 export default ProductDetails
@@ -100,11 +140,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,            // take entire main-axis
   },
-  coverPhoto: {
+  image: {
     backgroundColor: 'dodgerblue',
     aspectRatio: 2,
     resizeMode: 'cover'
   },
+
+  imageContainer: {
+    position: 'relative'
+  },
+      imageHeartContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+
+        position: 'absolute',
+        top: 16,
+        left: 16, right: 16,
+      },
+        backContainer: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        },
+
 
   imageTitleContainer: {
     // borderWidth: 2, borderColor: 'red',
@@ -142,8 +201,16 @@ const styles = StyleSheet.create({
   
   category: {
     marginVertical: 8,
-    // marginHorizontal: 4
-  }
+  },
 
-
+  descriptionContainer: {
+    padding: 8
+  },
+    subheading: {
+      color: theme.palette.primary.main
+    },
+    description: {
+      color: theme.palette.text.secondary,
+      textAlign: 'justify'
+    },
 })
