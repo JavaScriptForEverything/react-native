@@ -31,6 +31,7 @@ router.route('/')
 		productController.addProduct
 	)
 
+// 	/api/products/:productId
 router.route('/:productId')
 	.get(productController.getProductById)
 	.patch(productController.updateProductById)

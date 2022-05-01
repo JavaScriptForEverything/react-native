@@ -19,6 +19,7 @@ const productSchema = new Schema({
 		type: Number,
 		required: true,
 		min: 5,
+		// get: price => price.toFixed(2) 								// 200 => 200.00
 	},
 	rating: {
 		type: Number,
@@ -104,9 +105,12 @@ productSchema.virtual('totalReview').get(function () {
 	return calculateAvarageFromArrayObject(this.reviews, 'rating') || 0
 })
 
-// To show discount value
+/* 	const value = 100
+		const discount = 0.1 		// <= 10% <= 10/100
+		const discountValue = value - (value * discount)
+		const valueWithDiscount = value + (value * discount) */
 productSchema.virtual('oldPrice').get(function () {
-	return this.price + (this.price * 1.1)
+	return this.price + (this.price * .1)
 })
 
 
@@ -131,7 +135,9 @@ module.exports =  models.Product || model('Product', productSchema)
 	"summary" : "little summary goes here",
 	"description" : "long description little summary goes here",
 	"coverPhoto" : "/images/coverPhoto.jpg",
-	"images" : [ "/images/image1.jpg" ]
+	"images" : [ "/images/image1.jpg" ],
+
+	"categories": [ "shirt", "pant", ...seeModel ]
 }
 
 */

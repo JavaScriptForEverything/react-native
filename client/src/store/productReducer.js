@@ -30,7 +30,7 @@ const { reducer, actions } = createSlice({
 
       // Method-2: Get Every thing just in single line, but it will override old fields if conflict.
       // ...action.payload                       // Don't Do this way, if not to override old fields
-    })
+    }),
 
   } // End of reducers
 })

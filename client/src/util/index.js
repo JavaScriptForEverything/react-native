@@ -30,8 +30,8 @@ export const axios = (token) => {
 
 // => const getProducts = () => async (dispatch) => { }
 // => const getProducts = () => catchAsyncDispatch( async (dispatch) => { }, actions.failed)
-export const catchAsyncDispatch = (fn, errorCallback) => (dispatch, getStore) => {
-  return fn(dispatch, getStore).catch(err => {
+export const catchAsyncDispatch = (fn, errorCallback) => (dispatch, getState) => {
+  return fn(dispatch, getState).catch(err => {
     const message = err.response?.data.message || err.message
     dispatch( errorCallback(message) )
   })

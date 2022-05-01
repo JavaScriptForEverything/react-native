@@ -68,18 +68,18 @@ userSchema.pre('save', async function() {
 	this.confirmPassword = undefined
 })
 
-// Step-2: Connect to ForeignField 
-userSchema.virtual('products', {
-	ref: 'Product', 								// Product Model
-	foreignField: 'user', 					// Product.user 	which is userId
-	localField: '_id' 							// current._id === Product.user
-})
+// // Step-2: Connect to ForeignField 
+// userSchema.virtual('products', {
+// 	ref: 'Product', 								// Product Model
+// 	foreignField: 'user', 					// Product.user 	which is userId
+// 	localField: '_id' 							// current._id === Product.user
+// })
 
-userSchema.pre(/find*/, async function(next) {
-	this.populate('products')
-
-	next()
-})
+// // Step-3: Get products data and same into given (virtual) field
+// userSchema.pre(/find*/, async function(next) {
+// 	this.populate('products')
+// 	next()
+// })
 
 module.exports = models.User || model('User', userSchema)
 

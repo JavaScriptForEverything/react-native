@@ -12,14 +12,15 @@ const { reducer, actions } = createSlice({
     authenticated: '',
     user: {
       avatar: {},
-      products: [],
-      images: [],
-      coverPhoto: {}
     },
     users: [],
     isSignedUp: false,
     forgotPasswordMessage: '',
     resetPasswordMessage: '',
+
+    products: [],                      // .find({ user: req.user._id })
+    // images: [],
+    // coverPhoto: {}
   },
   reducers: {
     requested: (state, action) => ({
@@ -63,7 +64,8 @@ const { reducer, actions } = createSlice({
     userGot: (state, action) => ({
       ...state,
       loading: false,
-      user: action.payload,                     // => { data: { user }}
+      user: action.payload.user,           // => { data: { user }}
+      token: action.payload.token,         // update token from asyncStorage
       authenticated: true
     }),
     passwordForgotten: (state, action) => ({
@@ -75,7 +77,14 @@ const { reducer, actions } = createSlice({
       ...state,
       loading: false,
       resetPasswordMessage: action.payload
+    }),
+
+    getAllUserProducts: (state, action) => ({
+      ...state,
+      loading: false,
+      products: action.payload        // <= { data: { products }}
     })
+
 
 
   },  // end of reducers
@@ -143,7 +152,7 @@ export const logOnTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
 export const getMe = (token) => catchAsyncDispatch( async (dispatch) => {
   dispatch(actions.requested())
   const { data: { user }} = await axios(token).get('/api/users/me')
-  dispatch(actions.userGot( user ))
+  dispatch(actions.userGot({ user, token }))
 }, actions.failed)
 
 
@@ -152,3 +161,25 @@ export const logoutMe = () => async dispatch => {
   dispatch(actions.logedOut())
   await asyncStorage.removeItem('token')
 }
+
+
+
+// screens/user/profile.js  => useEffect(() => dispatch(getAllUserProducts(token)), [token])
+export const getAllUserProducts = (token) => catchAsyncDispatch( async (dispatch) => {
+  if(!token) return
+
+  const { data : { products } } = await axios(token).get('/api/users/user/all')
+  dispatch(actions.getAllUserProducts(products))
+}, actions.failed)
+
+
+// screens/user/profile.js  => useEffect(() => dispatch(getAllUserProducts(token)), [token])
+export const deleteProductById = (token, productId) => catchAsyncDispatch( async (dispatch, getState) => {
+  if(!token || !productId) return
+
+  const products = getState().user.products.filter(product => product._id !== productId)
+  dispatch(actions.getAllUserProducts(products))
+
+  await axios(token).delete(`/api/products/${productId}`)
+
+}, actions.failed)

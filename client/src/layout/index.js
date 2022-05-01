@@ -10,17 +10,14 @@ import AsyncStorageLib from '@react-native-async-storage/async-storage'
 const Layout = ({ isStack=false, children }) => {
 	const dispatch = useDispatch()
 	const navigation = useNavigation()
-	const { token } = useSelector( state => state.user )
 
 	useEffect( async() => {
-		const savedToken = await AsyncStorageLib.getItem('token')
-
-		const isTokenFound = token || savedToken
-		if(!isTokenFound) return 
+		const token = await AsyncStorageLib.getItem('token')
+		if(!token) return 
 		
-		dispatch(getMe(isTokenFound))
+		dispatch(getMe(token))
 		navigation.navigate('Profile')
-	}, [token])
+	}, [])
 	
 	return (
 		<SafeAreaView style={{ ...styles.container, marginTop: isStack ? 0 : StatusBar.currentHeight }}>

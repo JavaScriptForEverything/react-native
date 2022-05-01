@@ -24,3 +24,10 @@ router.route('/:userId')
 	.get(userController.getUserById)
 	.patch(userController.updateUserById)
 	.delete(userController.removeUserById)
+
+// we need /user/all 	because 	/user 	match with 	/:userId with regular expression
+router.route('/user/all')
+	.get(authController.protect, userController.getAllUserProducts)
+
+router.route('/user/:productId')
+	.get(authController.protect, userController.getUserProductById)

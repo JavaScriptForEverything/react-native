@@ -29,10 +29,10 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
   // console.log({ productId })
 
   const [ liked, setLiked ] = useState(false)
-  const { user } = useSelector( state => state.user )
-  const product = user.products.find( product => product._id === productId )
+  const { products } = useSelector( state => state.user )
+  const product = products.find( product => product._id === productId )
 
-  // console.log(product)
+
 
   const coverPhotoHandler = () => {
     console.log('Image uploaded')
@@ -51,6 +51,7 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
     console.log('liked')
   }
   
+  if(!product) return <Text>No product found</Text>
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container} >
@@ -91,8 +92,8 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
 
         <View style={styles.imageTitleContainerRight}>
           {product.oldPrice && <Caption>From ${product.oldPrice}</Caption> }
-          <Title>${product.price.toFixed(2)}</Title>
-          <Text style={styles.priceSave} > Save ${product.price/100}%</Text>
+          <Title>${product.price}</Title>
+          <Text style={styles.priceSave} > Save ${(product.oldPrice - product.price) / 100}%</Text>
         </View>
       </View>
 
@@ -211,6 +212,7 @@ const styles = StyleSheet.create({
     },
     description: {
       color: theme.palette.text.secondary,
-      textAlign: 'justify'
+      textAlign: 'justify',
+      marginBottom: 24
     },
 })

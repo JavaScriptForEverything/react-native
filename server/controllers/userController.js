@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
+const Product = require('../models/productModel')
 const { catchAsync, getToken, filterArrayObject, appError, sendMail, verifyToken, apiFeatures } = require('../util')
 
 const factoryHandler = require('./factoryHandler')
@@ -200,3 +201,29 @@ exports.resetPassword = catchAsync( async (req, res, next) => {
 })
 
 
+
+
+// router.route('/user').get( authController.protect, userController.getAllUserProducts)
+exports.getAllUserProducts = catchAsync(async (req, res, next) => {
+
+	const productId = req.params.productId
+	const products = await Product.find({ user: req.user._id })
+
+	res.status(200).json({
+		status: 'success',
+		total: products.length,
+		products
+	})
+})
+
+// router.route('/user/:productId').get( authController.protect, userController.getUserProductById)
+exports.getUserProductById = catchAsync(async (req, res, next) => {
+
+	const productId = req.params.productId
+	const product = await Product.findOne({ user: req.user._id, _id: productId })
+
+	res.status(200).json({
+		status: 'success',
+		product
+	})
+})
