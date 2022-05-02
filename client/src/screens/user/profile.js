@@ -25,13 +25,10 @@ const ProfileScreen = () => {
     navigation.navigate('Product Details', { productId: product._id })
     // console.log(product.name)
   }
-
-  const deleteIconHandler = (productId) => () => {
-    dispatch(deleteProductById(token, productId))
-  }
-  const addProductHandler = () => {
-    console.log('add product')
-  }
+  const addProductHandler = () => navigation.navigate('Add Product')
+  const deleteIconHandler = (productId) => () => dispatch(deleteProductById(token, productId))
+  
+  
 
   if(loading) return <ActivityIndicator style={styles.loader} size={40} color='dodgerblue' />
   if(!loading && !products.length) return <NotFound noResultFor='products' />
@@ -46,7 +43,6 @@ const ProfileScreen = () => {
               <View>
                 <List.Item
                   title={product.name}
-                  // left={props => <List.Icon {...props} icon='account' />}
                   left={props => <Image {...props} 
                     source={{ uri: `${BASE_URL}/${product.coverPhoto.secure_url}` }} 
                     style={{ width: 50, height: 50 }}
@@ -70,7 +66,6 @@ const ProfileScreen = () => {
         icon='plus'
         onPress={addProductHandler}
         style={styles.fabPlus}
-        // color='red'
       />
     </>
   )

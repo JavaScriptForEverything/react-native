@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, ScrollView, Image } from 'react-native'
 import { Caption, Subheading, Text, Title } from 'react-native-paper'
 import Swiper from 'react-native-swiper'
 import { BASE_URL } from '@env'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import Rating from '../../components/rating'
 import theme from '../../theme/color'
 import Category from '../../components/category'
+import GoBack from '../../components/goBack'
 
 const categories = [
   { icon: 'home', label: 'shirt' },
@@ -32,10 +32,8 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
   const { products } = useSelector( state => state.user )
   const product = products.find( product => product._id === productId )
 
-
-
-  const coverPhotoHandler = () => {
-    console.log('Image uploaded')
+  const coverPhotoHandler = (coverPhoto) => () => {
+    console.log({ coverPhoto })
   }
 
   const categoryPressHandler = (category) => {
@@ -45,11 +43,6 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
     console.log({ category })
   }
 
-  const backHandler = () => navigation.goBack()
-  const likePressedHandler = () => {
-    setLiked(!liked)
-    console.log('liked')
-  }
   
   if(!product) return <Text>No product found</Text>
 
@@ -57,22 +50,12 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container} >
 
       <View style={styles.imageContainer}>
+        <GoBack showLike={true} liked={liked} setLiked={setLiked} />
         <Image 
           source={{ uri: `${BASE_URL}/${product?.coverPhoto.secure_url}` }}
           style={styles.image}
-          onLoad={coverPhotoHandler}
+          onLoad={coverPhotoHandler(product.coverPhoto.secure_url)}
         />
-
-        <View style={styles.imageHeartContainer}>
-          <TouchableOpacity onPress={backHandler} style={styles.backContainer}>
-            <MaterialCommunityIcons name='arrow-left-bold-outline' size={24} />
-            <Text>Back</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={likePressedHandler}>
-            <MaterialCommunityIcons name={ liked ? 'heart' : 'heart-outline' } size={24} color='#f60000' />
-          </TouchableOpacity>
-        </View>
       </View>
 
       <View style={styles.imageTitleContainer}>
