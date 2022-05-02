@@ -97,3 +97,28 @@ export const formValidator = (obj={}, callback=f=>f) => {
 	return Object.keys(temObj).every(field => !temObj[field])
 }
 
+
+
+
+
+// Get File Size: const size = humanReadableFileSize(File.size) 		=> 132.5 KB
+export const humanReadableFileSize = (bytes, si=true, dp=1) => {
+  const thresh = si ? 1000 : 1024;
+
+  if (Math.abs(bytes) < thresh) return bytes + ' B'
+
+  const units = si
+    ? ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+  let u = -1;
+  const r = 10**dp;
+
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+
+  return bytes.toFixed(dp) + ' ' + units[u];
+}

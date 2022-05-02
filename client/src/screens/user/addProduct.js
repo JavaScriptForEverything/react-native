@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { createProduct } from '../../store/userReducer'
+import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 import { StyleSheet, View, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { Button, Caption, Divider, HelperText, List, Subheading, TextInput } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { nanoid } from '@reduxjs/toolkit'
 
 import GoBack from '../../components/goBack'
-import { arrayObjectAsObject } from '../../util'
+import { arrayObjectAsObject, formValidator, humanReadableFileSize } from '../../util'
 
 const url = 'http://192.168.0.105:5000/static/images/products/coverPhoto-62501c638ba7bc1b831258ed-908c100b4488.jpeg '
 
@@ -24,24 +29,81 @@ const inputItems = [
 const inputFields = arrayObjectAsObject(inputItems, 'name')
 
 const AddProduct = () => {
-  const [ fields, setFields ] = useState({ ...inputFields })
-  const [ fieldsError, setFieldsError ] = useState({ ...inputFields })
+  const dispatch = useDispatch()
+  const [ fields, setFields ] = useState({ 
+    ...inputFields,
+    coverPhoto: 'no image',
+    images: []              // [{ name, secure_url, public_id, size }, ...]
+  })
+  const [ fieldsError, setFieldsError ] = useState({ 
+    ...inputFields,
+    coverPhoto: '',
+    images: []
+  })
 
-  const coverImageUploadHandler = () => {
-    console.log('upload coverPhoto')
+  const { token, message, loading } = useSelector(state => state.user)
+
+  useEffect(() => {
+    if(message) alert(message)
+  }, [message])
+
+  const coverImageUploadHandler = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      base64: true,
+      allowsEditing: true,
+      aspectRatio: [4, 3]
+    })
+    
+    const coverPhoto = `data:image/jpg;base64,${result.base64}`
+    if(result.cancelled) return
+
+    setFields({ ...fields, coverPhoto })
   }
-  const multipleImageUploadHandler = () => {
-    console.log('images')
+  const multipleImageUploadHandler = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      base64: true,
+      allowsEditing: true,
+      aspectRatio: [4, 3],
+    })
+
+    if(result.cancelled) return
+
+    const File = await FileSystem.getInfoAsync(result.uri)
+    const size = humanReadableFileSize(File.size)
+    const public_id = nanoid()
+
+    const image = { 
+      name: result.uri.split('/').pop(),
+      public_id, 
+      secure_url: `data:image/jpg;base64,${result.base64}`,
+      size, 
+    }
+
+    setFields({ ...fields, images: [...fields.images, image] })
+    // console.log( imageObject )
   }
 
-  const listDeleteHandler = (id) => () => {
-    console.log({ id })
+  const listDeleteHandler = (public_id) => () => {
+    const images = fields.images.filter(image => image.public_id !== public_id )
+    setFields({ ...fields, images: [...images] })
+    // console.log({ public_id })
   }
-  const textChangeHandler = (name) => (text) => {
-    setFields({ ...fields, [name]: text})
-  }
+  const textChangeHandler = (name) => (text) => setFields({ ...fields, [name]: text})
+  
   const submitHandler = () => {
-    console.log(fields)
+    if( !formValidator(fields, setFieldsError) ) return
+
+    fields.images.length = 3        // more than 3 images will be suppersed
+
+    dispatch(createProduct(token, fields))
+
+    // fields.images = []
+    // fields.coverPhoto = undefined
+    // console.log(fields)
   }
 
 
@@ -55,7 +117,7 @@ const AddProduct = () => {
             <MaterialCommunityIcons name='cloud-upload' size={size} color='black' />
           </TouchableOpacity>
           <Image 
-            source={{ uri: url }}
+            source={{ uri: fields.coverPhoto }}
             style={styles.image}
           />
         </View>
@@ -68,14 +130,14 @@ const AddProduct = () => {
           </View>
         </TouchableOpacity>
 
-        {[1,2,3].map(item => (
-          <View key={item}>
+        {fields.images.map( (image, index) => (
+          <View key={image.public_id}>
             <List.Item
               title='Image 1.jpg'
-              description='542 KB'
-              left={props => <Image {...props} source={{ uri: url }} style={styles.image} />}
+              description={image.size}
+              left={props => <Image {...props} source={{ uri: image.secure_url }} style={styles.image} />}
               right={props => (
-                <TouchableOpacity onPress={listDeleteHandler(1)} >
+                <TouchableOpacity onPress={listDeleteHandler(image.public_id)} >
                   <List.Icon {...props} icon='close-circle-outline' />
                 </TouchableOpacity>
               )}
@@ -109,8 +171,8 @@ const AddProduct = () => {
           <Button
             style={styles.submitButton}
             mode='contained'
-            // uppercase={false}
             onPress={submitHandler}
+            loading={loading}
           >Create Post</Button>
 
         </View>

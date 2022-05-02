@@ -8,6 +8,7 @@ const { reducer, actions } = createSlice({
   initialState: {
     loading: false,
     error: '',
+    message: '',
     token: '',
     authenticated: '',
     user: {
@@ -26,7 +27,8 @@ const { reducer, actions } = createSlice({
     requested: (state, action) => ({
       ...state,                 // 1. copy entire store as it was
       loading: true,            // 2. only update loading: false => true to show loading effect
-      error: ''                 // 3. empty error before any request, which will reset old error message
+      error: '',                // 3. empty error before any request, which will reset old error message
+      message: ''               // reset product added/deleted/updated ...
     }),
     failed: (state, action) => ({
       ...state, 
@@ -83,6 +85,12 @@ const { reducer, actions } = createSlice({
       ...state,
       loading: false,
       products: action.payload        // <= { data: { products }}
+    }),
+
+    addProduct: (state, action) => ({
+      ...state,
+      loading: false,
+      message: 'product successfully added'
     })
 
 
@@ -182,4 +190,15 @@ export const deleteProductById = (token, productId) => catchAsyncDispatch( async
 
   await axios(token).delete(`/api/products/${productId}`)
 
+}, actions.failed)
+
+
+export const createProduct = (token, data) => catchAsyncDispatch(async (dispatch) => {
+  dispatch(actions.requested())
+
+  const { data : { status }} = await axios(token).post('/api/products', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+
+  dispatch(actions.addProduct())
 }, actions.failed)
