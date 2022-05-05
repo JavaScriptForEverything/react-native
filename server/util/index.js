@@ -2,7 +2,6 @@ const crypto = require('crypto')
 const jwt = require('jsonwebtoken') 				// => getToken(user.id)
 const nodemailer = require('nodemailer') 		// => sendMail({...})
 
-
 // every component used from ./util/index.js 		instead of /util/apiFeatures.js
 exports.apiFeatures = require('./apiFeatures') 		
 

@@ -47,6 +47,12 @@ exports.getAllProducts = factoryHandler.getAll(Product, 'products')
 
 
 exports.addProduct = async (req, res, next) => {
+
+	return res.status(201).json({
+		status: 'success',
+		body: req.body
+	})
+
 	try {
 		console.log(req.body, req.files)
 

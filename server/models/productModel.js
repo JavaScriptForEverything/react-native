@@ -100,10 +100,10 @@ productSchema.pre(/find*/, function() {
 	this.populate('reviews', '-__v -createdAt -updatedAt')
 })
 
-// calculat avarage rating from virtual property 'reviews' and saved into another virtual property
-productSchema.virtual('totalReview').get(function () {
-	return calculateAvarageFromArrayObject(this.reviews, 'rating') || 0
-})
+// // calculat avarage rating from virtual property 'reviews' and saved into another virtual property
+// productSchema.virtual('totalReview').get(function () {
+// 	return calculateAvarageFromArrayObject(this.reviews, 'rating') || 0
+// })
 
 /* 	const value = 100
 		const discount = 0.1 		// <= 10% <= 10/100

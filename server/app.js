@@ -42,7 +42,7 @@ app.use( '/api', rateLimit({
 */ 
 app.use(`/${RESOURCE_STATIC_PATH}`, STATIC_PATH)  // => set Static dir to used by client-side
 app.use(cors()) 														// => allow Cross Origin Resourcw Sharing
-// app.use(express.json({ limit: '20kb' })) 		// => limit not working
+app.use(express.json({ limit: '20MB' })) 		// => limit not working
 
 
 app.use(morgan('dev'))                      // => To indicate is requested or not with statusCode ...
