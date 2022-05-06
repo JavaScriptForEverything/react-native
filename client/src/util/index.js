@@ -3,6 +3,9 @@ import axiosOriginal from 'axios'
 import { BASE_URL } from '@env'
 
 
+// 	const secure_url = `data:image/jpg;base64,${result.base64}`,
+// dataURL's medatada: `${MEDATADA}${result.base64}`
+export const METADATA = 'data:image/jpg;base64,'
 
 
 
@@ -122,3 +125,4 @@ export const humanReadableFileSize = (bytes, si=true, dp=1) => {
 
   return bytes.toFixed(dp) + ' ' + units[u];
 }
+

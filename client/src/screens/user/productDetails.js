@@ -33,7 +33,7 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
   const product = products.find( product => product._id === productId )
 
   const coverPhotoHandler = (coverPhoto) => () => {
-    console.log({ coverPhoto })
+    // console.log({ coverPhoto })
   }
 
   const categoryPressHandler = (category) => {

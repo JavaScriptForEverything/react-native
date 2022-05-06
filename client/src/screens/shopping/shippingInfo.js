@@ -1,13 +1,13 @@
 import { StyleSheet, View, Text } from 'react-native'
 
-const Alert = () => {
+const ShippingInfoScreen = () => {
   return (
     <View>
-      <Text>Alert Message</Text>
+      <Text>Shipping Info</Text>
     </View>
   )
 }
-export default Alert
+export default ShippingInfoScreen
 
 const styles = StyleSheet.create({
 

@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { nanoid } from '@reduxjs/toolkit'
 
 import GoBack from '../../components/goBack'
-import { arrayObjectAsObject, formValidator, humanReadableFileSize } from '../../util'
+import { arrayObjectAsObject, formValidator, humanReadableFileSize, METADATA } from '../../util'
 
 const url = 'http://192.168.0.105:5000/static/images/products/coverPhoto-62501c638ba7bc1b831258ed-908c100b4488.jpeg '
 
@@ -28,16 +28,16 @@ const inputItems = [
 ]
 const inputFields = arrayObjectAsObject(inputItems, 'name')
 
-const AddProduct = () => {
+const AddProduct = ({ navigation }) => {
   const dispatch = useDispatch()
   const [ fields, setFields ] = useState({ 
     ...inputFields,
-    coverPhoto: 'no image',
+    coverPhoto: {},
     images: []              // [{ name, secure_url, public_id, size }, ...]
   })
   const [ fieldsError, setFieldsError ] = useState({ 
     ...inputFields,
-    coverPhoto: '',
+    coverPhoto: {},
     images: []
   })
 
@@ -56,10 +56,15 @@ const AddProduct = () => {
       aspectRatio: [4, 3]
     })
     
-    const coverPhoto = `data:image/jpg;base64,${result.base64}`
     if(result.cancelled) return
 
-    setFields({ ...fields, coverPhoto })
+    const public_id = nanoid()
+    const coverPhoto = { 
+      name: result.uri.split('/').pop(),
+      public_id, 
+      secure_url: `${METADATA}${result.base64}`,
+    }
+    setFields({ ...fields, coverPhoto: {...coverPhoto} })
   }
   const multipleImageUploadHandler = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -79,12 +84,12 @@ const AddProduct = () => {
     const image = { 
       name: result.uri.split('/').pop(),
       public_id, 
-      secure_url: `data:image/jpg;base64,${result.base64}`,
+      secure_url: `${METADATA}${result.base64}`,
       size, 
     }
-
-    setFields({ ...fields, images: [...fields.images, image] })
-    // console.log( imageObject )
+    // remove null or empty object from and arrayObject : [ null, {} ]  => []
+      const images = [ ...fields.images.filter(item => item && Object.keys(item).length) ]
+    setFields({ ...fields, images: [...images, image ] })
   }
 
   const listDeleteHandler = (public_id) => () => {
@@ -99,11 +104,11 @@ const AddProduct = () => {
 
     fields.images.length = 3        // more than 3 images will be suppersed
 
-    dispatch(createProduct(token, fields))
+    // fields.coverPhoto = fields.coverPhoto.secure_url.split(METADATA).pop()
+    // fields.images = fields.images.map(image => image.secure_url.split(METADATA).pop())
 
-    // fields.images = []
-    // fields.coverPhoto = undefined
-    // console.log(fields)
+    dispatch(createProduct(token, fields))
+    // navigation.navigate('User Product')     // push to User Profile
   }
 
 
@@ -117,7 +122,7 @@ const AddProduct = () => {
             <MaterialCommunityIcons name='cloud-upload' size={size} color='black' />
           </TouchableOpacity>
           <Image 
-            source={{ uri: fields.coverPhoto }}
+            source={{ uri: fields.coverPhoto.secure_url }}
             style={styles.image}
           />
         </View>
@@ -131,13 +136,13 @@ const AddProduct = () => {
         </TouchableOpacity>
 
         {fields.images.map( (image, index) => (
-          <View key={image.public_id}>
+          <View key={image?.public_id}>
             <List.Item
               title='Image 1.jpg'
-              description={image.size}
-              left={props => <Image {...props} source={{ uri: image.secure_url }} style={styles.image} />}
+              description={image?.size}
+              left={props => <Image {...props} source={{ uri: image?.secure_url }} style={styles.image} />}
               right={props => (
-                <TouchableOpacity onPress={listDeleteHandler(image.public_id)} >
+                <TouchableOpacity onPress={listDeleteHandler(image?.public_id)} >
                   <List.Icon {...props} icon='close-circle-outline' />
                 </TouchableOpacity>
               )}
@@ -155,7 +160,7 @@ const AddProduct = () => {
                 label={label}
                 placeholder={label}
                 onChangeText={textChangeHandler(name)}
-                onEndEditing={submitHandler}
+                // onEndEditing={textChangeHandler(name)}
                 keyboardType={type === 'number' ? 'numeric' : 'default'}
 
                 multiline={true}

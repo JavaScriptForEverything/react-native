@@ -19,7 +19,9 @@ const ProfileScreen = () => {
 
   // console.log(products)
 
-  useEffect(() => dispatch(getAllUserProducts(token)), [token])
+  useEffect(() => {
+    dispatch(getAllUserProducts(token))
+  }, [token])
 
   const productHandler = (product) => () => {
     navigation.navigate('Product Details', { productId: product._id })

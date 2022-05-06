@@ -9,10 +9,10 @@ import ShoppingScreen from "../screens/shopping"
 import UserStack from './userStack'
 
 const tabItems = [
-  { name: 'User', Component: UserStack, icon: 'account' },
+  { name: 'Shopping', Component: ShoppingScreen, icon: 'cart' },
   { name: 'Home', Component: HomeStack, icon: 'home' },
   { name: 'Admin', Component: AdminScreen, icon: 'cog' },
-  { name: 'Shopping', Component: ShoppingScreen, icon: 'cart' },
+  { name: 'User', Component: UserStack, icon: 'account' },
   // { name: 'User', Component: UserStack, icon: 'account' },
 ]
 

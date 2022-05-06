@@ -128,6 +128,8 @@ export const signUpTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
 
 // /src/screens/user/forgotPassword.js     => dispatch(sendForgotPasswordRequest(fields))
 export const sendForgotPasswordRequest = (obj={}) => catchAsyncDispatch( async (dispatch) => {
+  // if(!token) return console.log('No Token')
+
   dispatch(actions.requested())
   const { data: { message } } = await axios().post('/api/users/forgot-password', obj )
   dispatch(actions.passwordForgotten(message))
@@ -136,6 +138,8 @@ export const sendForgotPasswordRequest = (obj={}) => catchAsyncDispatch( async (
 
 // /src/screens/user/resetPassword.js     => dispatch(signUpTo(fields))
 export const resetPassword = (obj={}) => catchAsyncDispatch( async (dispatch) => {
+  // if(!token) return console.log('No Token')
+
   dispatch(actions.requested())
   const { data: { message } } = await axios().patch('/api/users/reset-password', obj )
   dispatch(actions.passwordReseted(message))
@@ -158,13 +162,17 @@ export const logOnTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
 
 // /src/screens/layout/index.js   => useEffect(() => token && dispatch(getMe(token)) , [token])
 export const getMe = (token) => catchAsyncDispatch( async (dispatch) => {
+  if(!token) return console.log('No Token')
+
   dispatch(actions.requested())
   const { data: { user }} = await axios(token).get('/api/users/me')
   dispatch(actions.userGot({ user, token }))
 }, actions.failed)
 
 
-export const logoutMe = () => async dispatch => {
+export const logoutMe = (token) => async dispatch => {
+  if(!token) return console.log('No Token')
+
   dispatch(actions.requested())
   dispatch(actions.logedOut())
   await asyncStorage.removeItem('token')
@@ -174,7 +182,7 @@ export const logoutMe = () => async dispatch => {
 
 // screens/user/profile.js  => useEffect(() => dispatch(getAllUserProducts(token)), [token])
 export const getAllUserProducts = (token) => catchAsyncDispatch( async (dispatch) => {
-  if(!token) return
+  if(!token) return console.log('No Token')
 
   const { data : { products } } = await axios(token).get('/api/users/user/all')
   dispatch(actions.getAllUserProducts(products))
@@ -183,7 +191,7 @@ export const getAllUserProducts = (token) => catchAsyncDispatch( async (dispatch
 
 // screens/user/profile.js  => useEffect(() => dispatch(getAllUserProducts(token)), [token])
 export const deleteProductById = (token, productId) => catchAsyncDispatch( async (dispatch, getState) => {
-  if(!token || !productId) return
+  if(!token || !productId) return console.log('No Token or productId')
 
   const products = getState().user.products.filter(product => product._id !== productId)
   dispatch(actions.getAllUserProducts(products))
@@ -193,12 +201,11 @@ export const deleteProductById = (token, productId) => catchAsyncDispatch( async
 }, actions.failed)
 
 
-export const createProduct = (token, data) => catchAsyncDispatch(async (dispatch) => {
+export const createProduct = (token, data) => catchAsyncDispatch( async (dispatch) => {
+  if(!token) return console.log('No Token')
+
   dispatch(actions.requested())
-
-  const { data : { status }} = await axios(token).post('/api/products', data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  })
-
+  const { data : { product }} = await axios(token).post('/api/products', data )
+  console.log(product)
   dispatch(actions.addProduct())
 }, actions.failed)

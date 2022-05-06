@@ -1,12 +1,20 @@
+import { useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
+import Stepper from '../../components/stepper'
 
 import Layout from '../../layout'
 
 const ShoppingScreen = ( props) => {
+
+
 	return (
 		<Layout>
-			<View>
+			<View style={styles.container}>
 				<Text>ShoppingScreen Screen</Text>
+
+				<Stepper />
+
+
 			</View>
 		</Layout>
 	)
@@ -14,5 +22,7 @@ const ShoppingScreen = ( props) => {
 export default ShoppingScreen
 
 const styles = StyleSheet.create({
-
+	container: {
+		paddingHorizontal: 8,
+	},
 })
