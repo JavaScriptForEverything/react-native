@@ -1,22 +1,26 @@
-const fs = require('fs/promises')
+const fs = require('fs')
 const path = require('path')
+const { promisify } = require('util')
+
 const Product = require('../models/productModel')
 const { catchAsync, appError, apiFeatures } = require('../util')
 
 const factoryHandler = require('./factoryHandler')
 
-const deleteFile = async (obj={}, imageField='secure_url') => {
-	
-	if( obj?.constructor !== Object || !(imageField in obj) ) return
-		
-	const url = path.join(__dirname, '../static', obj[imageField])
 
-	try {
-		await fs.unlink(url)
-	} catch (err) {
-		console.log(err.message)
-	}
+
+
+const deleteFile = async (file, imageField='secure_url') => {
+	const url = path.join(__dirname, '..', file[imageField])
+
+	// const isExists = fs.existsSync(url)
+	const isExists = await promisify(fs.exists)(url)
+	if(!isExists) return
+
+	await promisify(fs.unlink)(url)
+	return { ...file, [imageField]: url }
 }
+
 
 
 // // remove this method later, instead use above deleteFile()
@@ -88,12 +92,17 @@ exports.addProduct = async (req, res, next) => {
 		})
 
 	} catch (err) {
-		const body = req.body
+		// Static Solution:
+		let body = req.body
+		console.log(req.body)
 
-		Object.keys(body).forEach(field => {
-			if( Array.isArray(body[field]) ) body[field].forEach(item => deleteFile(item))
-			deleteFile(body[field])
-		})
+		const coverPhoto = await deleteFile(body['coverPhoto'])
+		let images = body['images'].map(image => deleteFile(image) )
+		images = await Promise.all(images)
+		images = images.filter(Boolean)
+
+		body = { ...body, coverPhoto, images }
+
 		next(appError(err.message))
 	}
 }
@@ -160,28 +169,33 @@ exports.updateProductById = factoryHandler.updateById(Product, 'product')
 // })
 
 
+
+const getFile = (file) => {
+	return new Promise((resolve, reject) => {
+		resolve(file)
+	})
+}
+
+
 exports.removeProductById = async (req, res, next) => {
 
-	const product = await Product.findById(req.params.productId)
-	// const product = await Product.findByIdAndDelete(req.params.productId)
+	// const product = await Product.findById(req.params.productId)
+	const product = await Product.findByIdAndDelete(req.params.productId)
 	if(!product) return next(appError('No product found'))
 
 /* => Return weide Object's Properties, because of Object.constructor === Object in deleteFile()
 	const fields = Object.keys(product) 				
-	const fields = Object.keys(product._doc)
-*/ 
+	const fields = Object.keys(product._doc) */ 
+	// let body = product._doc 
+	let body = product
 
-	const body = product._doc 
-	Object.keys(body).forEach(field => {
-		if( Array.isArray(body[field]) ) body[field].forEach(item => deleteFile(item))
-		deleteFile(body[field])
-	})
+	// Static Solution:
+	const coverPhoto = await deleteFile(body['coverPhoto'])
+	let images = body['images'].map(image => deleteFile(image) )
+	images = await Promise.all(images)
+	images = images.filter(Boolean)
 
-	return res.status(200).json({
-		status: 'success',
-		product 
-	})
-	// await deleteFiles(product)
+	body = { ...body, coverPhoto, images }
+
 	res.status(204).send()
 }
-
