@@ -6,9 +6,7 @@ const middlewareController = require('../controllers/middleware')
 const { appError } = require('../util')
 const imageHandler = require('../middleware/imageHandler')
 
-const RESOURCE_STATIC_PATH = process.env.RESOURCE_STATIC_PATH   // => static
-// const DESTINATION = `${RESOURCE_STATIC_PATH}/images/products`
-const DESTINATION = `${RESOURCE_STATIC_PATH}/images/reviews`
+const destination = '/static/images/products'
 
 module.exports = router = Router() 					// export + add variable to use in current page
 
@@ -17,7 +15,7 @@ router.route('/')
 	.get(productController.getAllProducts)
 	.post(
 		authController.protect, 
-		imageHandler(DESTINATION, 'secure_url'),  		// secure_url : property which will be checked
+		imageHandler(destination, 'secure_url'),  		// secure_url : property which will be checked
 		productController.addProduct
 	)
 

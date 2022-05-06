@@ -5,7 +5,7 @@ const { calculateAvarageFromArrayObject } = require('../util')
 const productSchema = new Schema({
 	user: { 								// To connect user by to UserSchema, to virtually Propulate all user products
 		type: Schema.Types.ObjectId,
-		required: true,
+		required: true, 								// auto added by protect() middleware
 	},
 	name: {
 		type: String,
@@ -54,10 +54,6 @@ const productSchema = new Schema({
 			required: true,
 			unique: true
 		},
-		name: { 											// to add image alt SEO
-			type: String,
-			required: true,
-		},
 		secure_url: { 								// url
 			type: String,
 			required: true,
@@ -68,10 +64,6 @@ const productSchema = new Schema({
 			type: String,
 			required: true,
 			unique: true
-		},
-		name: {
-			type: String,
-			required: true,
 		},
 		secure_url: {
 			type: String,

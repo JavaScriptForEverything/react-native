@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('fs/promises')
 const path = require('path')
 const { nanoid } = require('nanoid')
 
@@ -32,7 +32,7 @@ const { nanoid } = require('nanoid')
 
 
 
-const isObject = (item, imageField, destination) => {
+const saveFile = async (item, imageField, destination, { onlyImage = false }= {}) => {
 
   // check imageable field is an object and that object has property: { ..., secure_url: '' } <= imageField
   if( item.constructor !== Object || item.constructor === Object && !(imageField in item) ) return item
@@ -43,19 +43,19 @@ const isObject = (item, imageField, destination) => {
   const [ metadata, base64 ] = item[imageField].split(';base64,')     // => [ 'data:image/jpg', 'imagename.jpg' ]
   const ext = metadata.split('/').pop()
 
+  const isImage = metadata.split(':').pop().startsWith('image')       // => 'image/*
+  if( onlyImage && !isImage ) return new Error('Only Image is allowed here')
+
   // const filename = Date.now() + Math.round(Math.random() * 1000)
   // const url = path.resolve(__dirname, '../', 'static/images/reviews', `${filename}.${ext}`)
   const filename = nanoid()
-  const url = path.resolve(destination, `${filename}.${ext}`)
-
+  const url = path.join(__dirname, '..', destination, `${filename}.${ext}`)
 
   const fileBuffer = Buffer.from(base64, 'base64')
-  fs.writeFileSync(url, fileBuffer)
-  
+  // if I try to    await fs.writeFile()    : it throw error. but fs.writeFile().then()   works
+  fs.writeFile(url, fileBuffer).then((err, success) => err && console.log(err.message))
 
-  console.log(ext)
-
-	return { 
+  return { 
     ...item, 
     public_id: filename,
     [imageField]: url.split('/server').pop()    // give static path of express server.
@@ -73,11 +73,13 @@ const imageHandler = (destination, imageField='secure_url') => (req, res, next) 
 
   const body = req.body
 
-  Object.keys(body).forEach(field => {
+  Object.keys(body).forEach(async field => {
     let item = body[field]
 
-    if(Array.isArray(item)) item.forEach( (obj, index ) => item[index] = isObject(obj, imageField, destination) )
-    body[field] = isObject(item, imageField, destination)
+    if(Array.isArray(item)) item.forEach( async(obj, index ) => {
+      item[index] = await saveFile(obj, imageField, destination, { onlyImage: true}) 
+    })
+    body[field] = await saveFile(item, imageField, destination, { onlyImage: true})
   })
 
   next()
