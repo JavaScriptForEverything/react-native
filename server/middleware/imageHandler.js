@@ -35,7 +35,7 @@ const { nanoid } = require('nanoid')
 const saveFile = async (item, imageField, destination, { onlyImage = false }= {}) => {
 
   // check imageable field is an object and that object has property: { ..., secure_url: '' } <= imageField
-  if( item.constructor !== Object || item.constructor === Object && !(imageField in item) ) return item
+  if( item?.constructor !== Object || !(imageField in item) ) return item
 
   // check imageField is base64 String.
   if( !item[imageField].startsWith('data:') ) return item
