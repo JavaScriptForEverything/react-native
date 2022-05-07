@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { StyleSheet, View, KeyboardAvoidingView } from 'react-native'
 import { HelperText, TextInput } from 'react-native-paper'
+import { useSelector } from 'react-redux'
+import { saveInfo } from '../../store/paymentReducer'
 import { arrayObjectAsObject, formValidator } from '../../util'
 
 const inputItems = [
@@ -13,18 +15,29 @@ const inputItems = [
 ]
 const itemObject = arrayObjectAsObject(inputItems)
 
-const ShippingInfoScreen = (props) => {
+const ShippingInfoScreen = ({ step }) => {
+  const [ submited, setSubmited ] = useState(false)
   const [ fields, setFields ] = useState({...itemObject})
   const [ fieldsError, setFieldsError ] = useState({...itemObject})
   
+  const { screen } = useSelector( state => state.payment )
   
   const changeHandler = (name) => (text) => {
     setFields({ ...fields, [name]: text})
-    formValidator(fields, setFieldsError)
+    // formValidator(fields, setFieldsError)
+
+    setSubmited(true)
   }
 
-  // console.log({ step })
-  console.log(props)
+
+  console.log(screen)
+  // if(screen.isInfo)  console.log({ screen })
+
+  //
+  // if(step && submited && screen.isInfo) {
+  if(submited && screen.isInfo) {
+   saveInfo(fields) 
+  }
 
   return <></>
 

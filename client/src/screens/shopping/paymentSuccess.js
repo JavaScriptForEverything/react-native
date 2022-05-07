@@ -1,6 +1,8 @@
 import { StyleSheet, View, Text } from 'react-native'
 
-const PaymentSuccessScreen = () => {
+const PaymentSuccessScreen = ({ step }) => {
+  // console.log({ step })
+
   return (
     <View>
       <Text>Success Screen</Text>

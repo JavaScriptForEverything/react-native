@@ -5,7 +5,10 @@ const { actions, reducer } = createSlice({
   initialState: {
     loading: false,
     error: '',
-    message: '' 
+
+    // message: '' 
+    // to check button clicked to save data of this Screens.
+    screen: {}, // { isInfo: true, isDetails: true, isPayment: true, isSuccess: true }
   },
   reducers: {
     requested: (state, action) => ({
@@ -21,11 +24,25 @@ const { actions, reducer } = createSlice({
       error: action.payload 
     }),
 
+    nextClicked: (state, action) => ({ ...state, screen: action.payload })
+
   } // End of reducers
 })
 export default reducer
 
 
-const saveInfo = () => {
-  console.log('save info')
+/* Dispatch only nextButton Click:
+	const nextHandler = () => {
+    if(step === 1) dispatch(nextClicked({ isInfo: true }))
+
+		if(step > 3) return 
+		setStep(step+1)
+
+	}
+*/
+export const nextClicked = (obj) => (dispatch) => dispatch(actions.nextClicked(obj))
+
+
+export const saveInfo = (fields) => {
+  console.log(fields)
 }

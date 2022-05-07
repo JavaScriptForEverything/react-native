@@ -1,20 +1,36 @@
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { nextClicked } from '../store/paymentReducer'
+
 import { StyleSheet, View, ScrollView } from 'react-native'
 import { Avatar, Button, Divider, Text } from 'react-native-paper'
-import StepContent from '../screens/shopping/stepContent'
 import theme from '../theme/color'
+import StepContent from '../screens/shopping/stepContent'
 
 const stepItems = [
   { label: 'Info' },
   { label: 'Details' },
   { label: 'Payment' }
 ]
+
+
 const Stepper = () => {
+  const dispatch = useDispatch()
   const [ step, setStep ] = useState(1)
+  const { isScreen } = useSelector(state => state.payment)
+
+  // console.log({ isScreen })
+
 
 	const nextHandler = () => {
+    if(step < 2) dispatch(nextClicked({ isInfo: true }))
+    if(step === 2) dispatch(nextClicked({ isDetails: true }))
+    if(step === 3) dispatch(nextClicked({ isPayment: true }))
+    if(step === 4) dispatch(nextClicked({ isSuccess: true }))
+
 		if(step > 3) return 
 		setStep(step+1)
+
 	}
 	const prevHandler = () => {
 		if(step <= 1) return
@@ -37,11 +53,7 @@ const Stepper = () => {
       </View>
 
       <View style={styles.children}>
-          <StepContent 
-            step={step} 
-            prevHandler={prevHandler}
-            nextHandler={nextHandler}
-          />
+        <StepContent step={step} />
       </View>
 
       <View style={styles.buttonContainer}>
