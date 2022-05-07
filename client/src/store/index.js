@@ -3,10 +3,13 @@ import { authenticateUser } from './middlewares'
 
 import productReducer from './productReducer'
 import userReducer from './userReducer'
+import paymentReducer from './paymentReducer'
+
 
 const reducer = combineReducers({
   product: productReducer,
-  user: userReducer
+  user: userReducer,
+  payment: paymentReducer
 })
 
 export default configureStore({ 

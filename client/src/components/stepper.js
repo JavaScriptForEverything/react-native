@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
-import { Avatar, Button, Divider } from 'react-native-paper'
+import { StyleSheet, View, ScrollView } from 'react-native'
+import { Avatar, Button, Divider, Text } from 'react-native-paper'
 import StepContent from '../screens/shopping/stepContent'
 import theme from '../theme/color'
 
@@ -12,10 +12,8 @@ const stepItems = [
 const Stepper = () => {
   const [ step, setStep ] = useState(1)
 
-	console.log({ step })
-
 	const nextHandler = () => {
-		if(step >= 3) return
+		if(step > 3) return 
 		setStep(step+1)
 	}
 	const prevHandler = () => {
@@ -24,29 +22,48 @@ const Stepper = () => {
 	}
 
   return (
-    <>
-    <View style={styles.container}>
-      {stepItems.map(({ label }, index) => (
-        <View style={styles.item} key={label}>
-          <Avatar.Text label={index + 1} size={24} style={{ 
-            ...styles.badge,
-            backgroundColor: index + 1 <= step ? '#1976d2' : 'grey',
-          }}/>
-          <Text>{label}</Text>
-          <Divider style={styles.divider} />
-        </View>
-      ))}
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.wrapperContainer}>
+      <View style={styles.container}>
+        {stepItems.map(({ label }, index) => (
+          <View style={styles.item} key={label}>
+            <Avatar.Text label={index + 1} size={24} style={{ 
+              ...styles.badge,
+              backgroundColor: index + 1 <= step ? '#1976d2' : 'grey',
+            }}/>
+            <Text>{label}</Text>
+            <Divider style={styles.divider} />
+          </View>
+        ))}
+      </View>
 
       <View style={styles.children}>
-          <StepContent step={step} />
+          <StepContent 
+            step={step} 
+            prevHandler={prevHandler}
+            nextHandler={nextHandler}
+          />
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button mode='outlined' uppercase={false} onPress={prevHandler}>Prev</Button>
-        <Button mode='outlined' uppercase={false} onPress={nextHandler} style={styles.btnItem}>Next</Button>
+        <Button 
+          disabled={step <= 1}
+          mode='outlined' 
+          uppercase={false} 
+          onPress={prevHandler} 
+        >Prev</Button>
+
+        <Button 
+          disabled={step > 3} 
+          mode='outlined' 
+          uppercase={false} 
+          onPress={nextHandler} 
+          style={styles.btnItem}
+        >{ step >= 3 
+          ? (step > 3 ? 'Paid' : 'Pay') 
+          : 'Next'
+        }</Button>
       </View>
-    </>
+    </ScrollView>
   )
 }
 export default Stepper
@@ -57,6 +74,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#aaaa',
     marginHorizontal: 8,
+  },
+  wrapperContainer: {
+    marginVertical: 8*3
   },
   container: {
     // borderWidth: 1, borderColor: 'dodgerblue',

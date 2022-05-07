@@ -33,6 +33,7 @@ const { reducer, actions } = createSlice({
     failed: (state, action) => ({
       ...state, 
       loading: false,           // To stop loading effect
+      message: '',
       error: action.payload     // make sure payload data MUST BE STRING, Object throw error
     }),
     getAllUsers: (state, action) => ({
