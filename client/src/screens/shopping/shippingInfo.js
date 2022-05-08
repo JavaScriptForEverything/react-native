@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { StyleSheet, View, KeyboardAvoidingView } from 'react-native'
-import { HelperText, TextInput } from 'react-native-paper'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { saveInfo } from '../../store/paymentReducer'
 import { arrayObjectAsObject, formValidator } from '../../util'
+
+import { StyleSheet, View, KeyboardAvoidingView } from 'react-native'
+import { HelperText, TextInput, Title } from 'react-native-paper'
+import AsyncStorageLib from '@react-native-async-storage/async-storage'
+import theme from '../../theme/color'
 
 const inputItems = [
   { label: 'Full Name', name: 'name' },
@@ -16,34 +19,37 @@ const inputItems = [
 const itemObject = arrayObjectAsObject(inputItems)
 
 const ShippingInfoScreen = ({ step }) => {
+  const dispatch = useDispatch()
   const [ submited, setSubmited ] = useState(false)
   const [ fields, setFields ] = useState({...itemObject})
   const [ fieldsError, setFieldsError ] = useState({...itemObject})
   
-  const { screen } = useSelector( state => state.payment )
+  const { info } = useSelector( state => state.payment )
+  const fn = async() => {
+    const info = JSON.parse( await AsyncStorageLib.getItem('info'))
+    setFields(info)
+  }
+
+  // console.log(info)
+
+  useEffect(() => {
+    fn()
+  }, [])
+
   
   const changeHandler = (name) => (text) => {
     setFields({ ...fields, [name]: text})
-    // formValidator(fields, setFieldsError)
+    formValidator(fields, setFieldsError)
 
-    setSubmited(true)
+    // save into store + save on localStorage
+    dispatch(saveInfo({ ...fields, [name]: text}))
   }
 
 
-  console.log(screen)
-  // if(screen.isInfo)  console.log({ screen })
-
-  //
-  // if(step && submited && screen.isInfo) {
-  if(submited && screen.isInfo) {
-   saveInfo(fields) 
-  }
-
-  return <></>
 
   return (
     <View>
-      <KeyboardAvoidingView>
+      <Title style={styles.title}>Shipping Information</Title>
 
       {inputItems.map(({ label, name, type}) => (
         <View key={name}>
@@ -55,16 +61,20 @@ const ShippingInfoScreen = ({ step }) => {
             value={fields[name]}
             onChangeText={changeHandler(name)}
             error={!!fieldsError[name] || !fields[name]}
+            style={{ marginBottom: 8 }}
           />
           {!!fieldsError[name] && <HelperText type='error'>{fieldsError[name]}</HelperText> }
         </View>
       ))}
-      </KeyboardAvoidingView>
     </View>
   )
 }
 export default ShippingInfoScreen
 
 const styles = StyleSheet.create({
-
+  title: {
+    marginBottom: 8 * 3,
+    textAlign: 'center',
+    color: theme.palette.primary.main
+  }
 })

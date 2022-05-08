@@ -7,10 +7,10 @@ const ShoppingStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen 
-        name='Shopping'
+        name='Shopping Screen'
         component={ShoppingScreen}
         options={{
-          // headerShown: false
+          headerShown: false
         }}
       />
     </Stack.Navigator>

@@ -1,3 +1,4 @@
+import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import { createSlice } from '@reduxjs/toolkit';
 
 const { actions, reducer } = createSlice({
@@ -6,9 +7,11 @@ const { actions, reducer } = createSlice({
     loading: false,
     error: '',
 
+    info: {},
+
     // message: '' 
     // to check button clicked to save data of this Screens.
-    screen: {}, // { isInfo: true, isDetails: true, isPayment: true, isSuccess: true }
+    // screen: {}, // { isInfo: true, isDetails: true, isPayment: true, isSuccess: true }
   },
   reducers: {
     requested: (state, action) => ({
@@ -24,7 +27,8 @@ const { actions, reducer } = createSlice({
       error: action.payload 
     }),
 
-    nextClicked: (state, action) => ({ ...state, screen: action.payload })
+    nextClicked: (state, action) => ({ ...state, screen: action.payload }),
+    saveInfo: (state, action) => ({ ...state, info: action.payload }),
 
   } // End of reducers
 })
@@ -43,6 +47,7 @@ export default reducer
 export const nextClicked = (obj) => (dispatch) => dispatch(actions.nextClicked(obj))
 
 
-export const saveInfo = (fields) => {
-  console.log(fields)
+export const saveInfo = (fields) => async (dispatch) => {
+  dispatch(actions.saveInfo(fields))
+  await AsyncStorageLib.setItem('info', JSON.stringify(fields))
 }

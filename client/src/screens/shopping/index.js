@@ -10,11 +10,7 @@ const ShoppingScreen = ( props) => {
 	return (
 		<Layout>
 			<View style={styles.container}>
-				<Text>ShoppingScreen Screen</Text>
-
 				<Stepper />
-
-
 			</View>
 		</Layout>
 	)

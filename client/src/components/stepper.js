@@ -15,18 +15,18 @@ const stepItems = [
 
 
 const Stepper = () => {
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
   const [ step, setStep ] = useState(1)
-  const { isScreen } = useSelector(state => state.payment)
+  // const { isScreen } = useSelector(state => state.payment)
 
   // console.log({ isScreen })
 
 
 	const nextHandler = () => {
-    if(step < 2) dispatch(nextClicked({ isInfo: true }))
-    if(step === 2) dispatch(nextClicked({ isDetails: true }))
-    if(step === 3) dispatch(nextClicked({ isPayment: true }))
-    if(step === 4) dispatch(nextClicked({ isSuccess: true }))
+    // if(step < 2) dispatch(nextClicked({ isInfo: true }))
+    // if(step === 2) dispatch(nextClicked({ isDetails: true }))
+    // if(step === 3) dispatch(nextClicked({ isPayment: true }))
+    // if(step === 4) dispatch(nextClicked({ isSuccess: true }))
 
 		if(step > 3) return 
 		setStep(step+1)
@@ -58,7 +58,8 @@ const Stepper = () => {
 
       <View style={styles.buttonContainer}>
         <Button 
-          disabled={step <= 1}
+          disabled={step <= 1 }  // for tesing
+          // disabled={step <= 1 || step > 3}  // if step = 1 or payment success
           mode='outlined' 
           uppercase={false} 
           onPress={prevHandler} 
@@ -110,13 +111,13 @@ const styles = StyleSheet.create({
   
   children: {
     // borderWidth: 1, borderColor: 'dodgerblue',
-    marginVertical: 16,
+    marginVertical: 8 * 3,
   },
 
 	buttonContainer: {
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
-		marginVertical: 16
+		marginBottom: 16
 	},
 		btnItem: {
 			marginLeft: 8
