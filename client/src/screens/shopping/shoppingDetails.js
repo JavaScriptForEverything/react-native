@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { nextClicked } from '../../store/paymentReducer'
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native'
 import { List, Text, Title } from 'react-native-paper'
+import { BASE_URL } from '@env'
 
 import theme from '../../theme/color'
 import StepperButton from '../../components/stepperButtons.js'
+import { useNavigation } from '@react-navigation/native'
 
 const title= 'Lorem ipsum dolor sit amet, consectetur'
 const coverPhoto = require('../../../assets/favicon.png')
@@ -21,12 +23,16 @@ const cartItems = [
 ]
 
 const ShoppingDetailsScreen = () => {
+  const navigation = useNavigation()
   const dispatch = useDispatch()
   const { step } = useSelector(state => state.payment)
+  const { carts } = useSelector(state => state.product)
 
   const deleteHandler = (id) => () => {
     console.log({ id })
     console.log('create new Stack here for product details again so that user can easyly go back')
+
+    navigation.navigate('Cart Details')
   }
 
 
@@ -39,12 +45,16 @@ const ShoppingDetailsScreen = () => {
     <View>
       <Title style={styles.title}>Shopping Details</Title>
 
-      {cartItems.map((cart, index, items) => (
+      {carts.map((cart, index, items) => (
         <TouchableOpacity key={cart._id} onPress={deleteHandler(cart._id)}>
           <List.Item 
-            title={cart.title}
-            description={cart.description || ''}
-            left={(props) => <Image {...props} source={cart.coverPhoto} style={{ width: 40, height: 40 }} />}
+            title={cart.name}
+            description={cart.summary || ''}
+            left={(props) => <Image {...props} 
+              source={{ uri: `${BASE_URL}/${cart.coverPhoto.secure_url}` }} 
+              // style={{ width: 40, height: 40 }} 
+              style={{ aspectRatio: 1 }}      // 1 => W:x, H:x,   2 => W:x, H: x*2
+            />}
             right={(props) => (
                 <Text style={{
                   ...styles.right,
@@ -60,13 +70,13 @@ const ShoppingDetailsScreen = () => {
         <View style={styles.leftItem}>
           <Text style={styles.heading}> Items </Text>
           <Text style={styles.item}>:</Text>
-          <Text>{cartItems.length}</Text>
+          <Text>{carts.length}</Text>
         </View>
 
         <View style={styles.rightItem}>
           <Text style={styles.heading}> Total </Text>
           <Text style={styles.item}>:</Text>
-          <Text>${cartItems.reduce((total, product) => total + product.price, 0)}</Text>
+          <Text>${carts.reduce((total, product) => total + product.price, 0)}</Text>
         </View>
       </View>
       

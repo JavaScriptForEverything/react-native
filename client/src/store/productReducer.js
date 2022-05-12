@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { axios, catchAsyncDispatch, filterArrayObject } from '../util'
-import asyncStorage from '@react-native-async-storage/async-storage'
 
 const { reducer, actions } = createSlice({
   name: 'product',
@@ -37,6 +36,14 @@ const { reducer, actions } = createSlice({
       ...state,
       loading: false,
       carts: action.payload
+    }),
+    updateProduct: (state, action) => ({
+      ...state,
+      loading: false,
+      products: state.products.map(oldProduct => oldProduct._id === action.payload._id  
+        ? action.payload 
+        : oldProduct
+      )
     })
 
   } // End of reducers
@@ -63,12 +70,14 @@ export const getProducts = ( params={} ) => catchAsyncDispatch( async (dispatch)
   dispatch( actions.getAllProduct(data) )
 }, actions.failed)
 
-export const addToCart = (cart) => catchAsyncDispatch( async (dispatch) => {
-  let carts = await asyncStorage.getItem('carts')
-      carts = JSON.parse(carts)
-      // carts = carts.concat(cart) 
-      carts = carts ? carts.concat(cart) : [cart]
 
+// used into src/screens/home/product.js  : addtoCartHandler
+export const addToCart = (carts) => catchAsyncDispatch( async (dispatch) => {
+  console.log(carts)
   dispatch(actions.addToCart(carts))  // add to store first
-  await asyncStorage.setItem('carts', JSON.stringify(carts))  // then save on localStorage
 }, actions.failed)
+
+// used into src/screens/home/product.js  : addtoCartHandler
+export const updateProduct = (product) => (dispatch) => {
+  dispatch(actions.updateProduct(product))
+}

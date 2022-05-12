@@ -25,17 +25,16 @@ const Tab = createMaterialBottomTabNavigator()
 const BottomTabs = () => {
   const [ localCarts, setLocalCarts ] = useState([])
   const { user } = useSelector( state => state.user )
-  const { carts: storeCarts } = useSelector( state => state.product )
+  const { carts } = useSelector( state => state.product )
 
-  const carts = storeCarts || localCarts
-  const numberOfCarts = carts.length
-
+  const cartItems = carts.length ? carts : localCarts
+  const numberOfCarts = cartItems?.length
   // console.log(numberOfCarts)
 
   const getCartItems = async () => {
     let localCarts =  await AsyncStorageLib.getItem('carts') 
         localCarts = JSON.parse( localCarts )
-    setLocalCarts(localCarts)
+    localCarts && setLocalCarts(localCarts)
   }
 
   useEffect(() => {
@@ -58,10 +57,9 @@ const BottomTabs = () => {
             tabBarIcon: (props) => (
               <View style={styles.iconContainer}>
                 <MaterialCommunityIcons {...props} name={icon} size={24} />
-                { name === 'Shopping' && 
-                // <Text style={styles.badge}>{numberOfCarts}</Text>
-                <Badge style={styles.badge}>{numberOfCarts}</Badge> 
-                }
+                { name === 'Shopping' && !!numberOfCarts && (
+                  <Badge style={styles.badge}>{numberOfCarts}</Badge> 
+                )}
               </View>
             )
           }}

@@ -1,19 +1,21 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addToCart } from '../../store/productReducer'
+import { addToCart, updateProduct } from '../../store/productReducer'
 import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native'
-import { Button, Surface, Title } from 'react-native-paper'
+import asyncStorage from '@react-native-async-storage/async-storage'
+
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { Button, Surface, Title, Text } from 'react-native-paper'
 
 import { BASE_URL } from '@env'
 import theme from '../../theme/color'
 
+// used into src/screens/home/index.js
 const Product = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
-
-	const { error, products } = useSelector( state => state.product )
-	// console.log(products)
+	const { error, products, carts } = useSelector( state => state.product )
+	
 
 	useEffect(() => {
 		if(error) console.log(error)
@@ -23,10 +25,20 @@ const Product = () => {
     navigation.navigate('Product Details', { product })
   }
 
-  const addToCartHandler = (product) => () => {
+  const addToCartHandler = (product) => async () => {
     const { _id, coverPhoto, name, summary, price } = product
+    const cart = { _id, coverPhoto, name, summary, price }
 
-    dispatch(addToCart({ _id, coverPhoto, name, summary, price }))
+    // await asyncStorage.removeItem('carts')  // then save on localStorage
+    // dispatch(addToCart([]))
+    // return
+
+    const cartAlreadyAdded = carts.find(item => item._id === product._id)
+    if(cartAlreadyAdded) return alert('This product already added')
+
+    dispatch(addToCart(carts.concat(cart)))
+    dispatch(updateProduct({...product, isAddedToCart: true }))
+    await asyncStorage.setItem('carts', JSON.stringify(carts.concat(cart)))  // then save on localStorage
   }
 
   return (
@@ -47,8 +59,10 @@ const Product = () => {
               <Title>{product.name}</Title>
             </TouchableOpacity>
               <Text style={styles.price}>${product.price?.toFixed(2)}</Text>
-              <TouchableOpacity disabled={true} onPress={addToCartHandler(product)} >
-                <Button mode='contained' uppercase={false} disabled={true} >Add To Cart</Button>
+              <TouchableOpacity disabled={product.isAddedToCart} onPress={addToCartHandler(product)} >
+                <Button mode='contained' uppercase={false} disabled={product.isAddedToCart} >
+                  { product.isAddedToCart ? 'Added to Cart' : 'Add To Cart' }
+                </Button>
               </TouchableOpacity>
             </View>
           </Surface>

@@ -1,15 +1,23 @@
 import Toast from 'react-native-toast-message'
 import { useEffect } from 'react'
 import { SafeAreaView, StyleSheet, StatusBar } from 'react-native'
-import { useDispatch, useSelector } from 'react-redux'
-import { getProducts } from '../store/productReducer'
+import { useDispatch } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import { getMe } from '../store/userReducer'
 import AsyncStorageLib from '@react-native-async-storage/async-storage'
+import { addToCart } from '../store/productReducer'
 
 const Layout = ({ isStack=false, children }) => {
 	const dispatch = useDispatch()
 	const navigation = useNavigation()
+
+  const getCartItems = async () => {
+    let localCartItems = await AsyncStorageLib.getItem('carts')
+        localCartItems = JSON.parse(localCartItems)
+    localCartItems.length && dispatch( addToCart(localCartItems) )
+  }
+  useEffect(() => getCartItems(), [])
+
 
 	useEffect( async() => {
 		const token = await AsyncStorageLib.getItem('token')

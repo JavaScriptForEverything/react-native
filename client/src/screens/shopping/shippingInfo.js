@@ -22,7 +22,6 @@ const itemObject = arrayObjectAsObject(inputItems)
 
 const ShippingInfoScreen = () => {
   const dispatch = useDispatch()
-  const [ submited, setSubmited ] = useState(false)
   const [ fields, setFields ] = useState({...itemObject})
   const [ fieldsError, setFieldsError ] = useState({...itemObject})
   
