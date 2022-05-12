@@ -1,10 +1,19 @@
+import { useDispatch } from 'react-redux'
+import { getProducts } from '../../store/productReducer'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
 import Layout from '../../layout'
 import SearchBar from './searchBar'
 import Products from './product'
+import { useEffect } from 'react'
 
-const HomeScreen = ( props) => {
+const HomeScreen = () => {
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		dispatch(getProducts())
+	}, [])
+
 
 	return (
 		<Layout>

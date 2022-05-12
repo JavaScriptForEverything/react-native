@@ -16,7 +16,7 @@ const Layout = ({ isStack=false, children }) => {
 		if(!token) return 
 		
 		dispatch(getMe(token))
-		navigation.navigate('Profile')
+		// navigation.navigate('Profile')
 	}, [])
 	
 	return (

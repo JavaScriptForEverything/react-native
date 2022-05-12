@@ -1,8 +1,11 @@
 import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { nextClicked } from '../../store/paymentReducer'
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native'
-import { List, Subheading, Text, Title } from 'react-native-paper'
+import { List, Text, Title } from 'react-native-paper'
 
 import theme from '../../theme/color'
+import StepperButton from '../../components/stepperButtons.js'
 
 const title= 'Lorem ipsum dolor sit amet, consectetur'
 const coverPhoto = require('../../../assets/favicon.png')
@@ -18,9 +21,18 @@ const cartItems = [
 ]
 
 const ShoppingDetailsScreen = () => {
+  const dispatch = useDispatch()
+  const { step } = useSelector(state => state.payment)
+
   const deleteHandler = (id) => () => {
     console.log({ id })
     console.log('create new Stack here for product details again so that user can easyly go back')
+  }
+
+
+  const submitHandler = () => {
+    console.log('ShoppingDetails Need data from AddToCart localStorage')
+    dispatch(nextClicked(step + 1))
   }
 
   return (
@@ -58,6 +70,7 @@ const ShoppingDetailsScreen = () => {
         </View>
       </View>
       
+      <StepperButton onPress={submitHandler} />
     </View>
   )
 }

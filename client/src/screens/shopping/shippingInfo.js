@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { saveInfo } from '../../store/paymentReducer'
+import { saveInfo, nextClicked } from '../../store/paymentReducer'
 import { arrayObjectAsObject, formValidator } from '../../util'
 
-import { StyleSheet, View, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { HelperText, TextInput, Title } from 'react-native-paper'
 import AsyncStorageLib from '@react-native-async-storage/async-storage'
 import theme from '../../theme/color'
+
+import StepperButton from '../../components/stepperButtons.js'
 
 const inputItems = [
   { label: 'Full Name', name: 'name' },
@@ -18,13 +20,13 @@ const inputItems = [
 ]
 const itemObject = arrayObjectAsObject(inputItems)
 
-const ShippingInfoScreen = ({ step }) => {
+const ShippingInfoScreen = () => {
   const dispatch = useDispatch()
   const [ submited, setSubmited ] = useState(false)
   const [ fields, setFields ] = useState({...itemObject})
   const [ fieldsError, setFieldsError ] = useState({...itemObject})
   
-  const { info } = useSelector( state => state.payment )
+  const { info, step } = useSelector( state => state.payment )
   const fn = async() => {
     const info = JSON.parse( await AsyncStorageLib.getItem('info'))
     setFields(info)
@@ -40,9 +42,13 @@ const ShippingInfoScreen = ({ step }) => {
   const changeHandler = (name) => (text) => {
     setFields({ ...fields, [name]: text})
     formValidator(fields, setFieldsError)
+  }
 
-    // save into store + save on localStorage
-    dispatch(saveInfo({ ...fields, [name]: text}))
+  const submitHandler = () => {
+    if( !formValidator(fields, setFieldsError) ) return
+    
+    dispatch(saveInfo(fields))    // save into store + save on localStorage
+    dispatch(nextClicked(step + 1))
   }
 
 
@@ -66,6 +72,8 @@ const ShippingInfoScreen = ({ step }) => {
           {!!fieldsError[name] && <HelperText type='error'>{fieldsError[name]}</HelperText> }
         </View>
       ))}
+
+      <StepperButton onPress={submitHandler} />
     </View>
   )
 }

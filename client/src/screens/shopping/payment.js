@@ -3,20 +3,26 @@ import { StyleSheet, View } from 'react-native'
 import { List, RadioButton, Subheading, Text, Title } from 'react-native-paper'
 
 import theme from '../../theme/color'
+import StepperButton from '../../components/stepperButtons.js'
 import PaymentByBcash from './payment/paymentByBcash'
 import PaymentByCard from './payment/paymentByCard'
 import PaymentByCash from './payment/paymentByCash'
+import { useDispatch, useSelector } from 'react-redux'
+import { nextClicked } from '../../store/paymentReducer'
 
 const paymentMethods = [ 
   { name: 'Card',   label: 'Card Payment', Component: PaymentByCard },
-  { name: 'bCash',  label: 'BCash Mobile', Component: PaymentByBcash },
+  { name: 'bCash',  label: 'Bcash Mobile', Component: PaymentByBcash },
   { name: 'Cash',   label: 'Cash on Delevery', Component: PaymentByCash }, 
 ]
 
 
 const PaymentScreen = () => {
-  const [ extended, setExtended ] = useState(true)
+  const dispatch = useDispatch()
+  const [ extended, setExtended ] = useState(false)
   const [ paymentType, setPaymentType ] = useState('Card')
+
+  const { step } = useSelector(state => state.payment)
 
   const paymentAccordionHandler = (newExtended) => {
     setExtended(newExtended)
@@ -27,6 +33,11 @@ const PaymentScreen = () => {
     setPaymentType(value)
   }
 
+  const submitHandler = () => {
+    console.log('Payment Submit Handler')
+    dispatch(nextClicked(step + 1))
+  }
+
   return (
     <View>
       <Title style={styles.title}>Payment Details</Title>
@@ -34,8 +45,8 @@ const PaymentScreen = () => {
       <List.Accordion
         expanded={extended}
         onPress={paymentAccordionHandler}
-        title='Payment Methods'
-        description='You can choose one of 3 payment methods'
+        title='Choose Payment Methods'
+        description='By Cart, Bcash or Cash on Delievery'
       >
         <RadioButton.Group onValueChange={changeHandler} value={paymentType} >
           {paymentMethods.map(({name, label}) => (
@@ -54,6 +65,9 @@ const PaymentScreen = () => {
           <Component key={name}/>
         ))}
       </View>
+    
+
+      <StepperButton onPress={submitHandler} />
     </View>
   )
 }

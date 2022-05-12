@@ -7,8 +7,8 @@ const { actions, reducer } = createSlice({
     loading: false,
     error: '',
 
-    info: {},
-
+    step: 1,
+    info: {},             // used to store shippingInfo
     // message: '' 
     // to check button clicked to save data of this Screens.
     // screen: {}, // { isInfo: true, isDetails: true, isPayment: true, isSuccess: true }
@@ -27,7 +27,7 @@ const { actions, reducer } = createSlice({
       error: action.payload 
     }),
 
-    nextClicked: (state, action) => ({ ...state, screen: action.payload }),
+    nextClicked: (state, action) => ({ ...state, step: action.payload }),
     saveInfo: (state, action) => ({ ...state, info: action.payload }),
 
   } // End of reducers
@@ -44,7 +44,12 @@ export default reducer
 
 	}
 */
-export const nextClicked = (obj) => (dispatch) => dispatch(actions.nextClicked(obj))
+export const nextClicked = (step) => (dispatch) => {
+  dispatch(actions.nextClicked(step))
+}
+// export const prevClicked = (step) => (dispatch) => {
+//   dispatch(actions.nextClicked( step - 1))
+// }
 
 
 export const saveInfo = (fields) => async (dispatch) => {

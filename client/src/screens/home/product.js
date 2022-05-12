@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToCart } from '../../store/productReducer'
 import { useNavigation } from '@react-navigation/native'
 import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native'
 import { Button, Surface, Title } from 'react-native-paper'
@@ -9,6 +10,7 @@ import theme from '../../theme/color'
 
 const Product = () => {
   const navigation = useNavigation()
+  const dispatch = useDispatch()
 
 	const { error, products } = useSelector( state => state.product )
 	// console.log(products)
@@ -22,13 +24,15 @@ const Product = () => {
   }
 
   const addToCartHandler = (product) => () => {
-    console.log(product.id)
+    const { _id, coverPhoto, name, summary, price } = product
+
+    dispatch(addToCart({ _id, coverPhoto, name, summary, price }))
   }
 
   return (
     <View style={styles.container}>
       { products.map(product => (
-        <View key={product.id} style={styles.item}>
+        <View key={product._id} style={styles.item}>
           <Surface style={styles.card}>
             <TouchableOpacity onPress={detailsHandler(product)} >
               <Image source={{ 
@@ -43,8 +47,8 @@ const Product = () => {
               <Title>{product.name}</Title>
             </TouchableOpacity>
               <Text style={styles.price}>${product.price?.toFixed(2)}</Text>
-              <TouchableOpacity onPress={addToCartHandler(product)} >
-                <Button mode='contained' uppercase={false} >Add To Cart</Button>
+              <TouchableOpacity disabled={true} onPress={addToCartHandler(product)} >
+                <Button mode='contained' uppercase={false} disabled={true} >Add To Cart</Button>
               </TouchableOpacity>
             </View>
           </Surface>

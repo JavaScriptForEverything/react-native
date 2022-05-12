@@ -1,13 +1,16 @@
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import AsyncStorageLib from '@react-native-async-storage/async-storage'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { StyleSheet, View, Text } from 'react-native'
+import { Badge } from 'react-native-paper'
 
 import theme from '../theme/color'
 import HomeStack from './homeStack'
 import AdminScreen from '../screens/admin'
 import UserStack from './userStack'
 import ShoppingStack from './shoppingStack'
-// import ShoppingScreen from "../screens/shopping"
 
 const tabItems = [
   { name: 'Shopping', Component: ShoppingStack, icon: 'cart' },
@@ -20,8 +23,24 @@ const tabItems = [
 const Tab = createMaterialBottomTabNavigator()
 
 const BottomTabs = () => {
+  const [ localCarts, setLocalCarts ] = useState([])
   const { user } = useSelector( state => state.user )
+  const { carts: storeCarts } = useSelector( state => state.product )
 
+  const carts = storeCarts || localCarts
+  const numberOfCarts = carts.length
+
+  // console.log(numberOfCarts)
+
+  const getCartItems = async () => {
+    let localCarts =  await AsyncStorageLib.getItem('carts') 
+        localCarts = JSON.parse( localCarts )
+    setLocalCarts(localCarts)
+  }
+
+  useEffect(() => {
+    getCartItems()
+  }, [])
 
 
   return (
@@ -36,8 +55,15 @@ const BottomTabs = () => {
           name={name}
           component={Component}
           options={{
-            tabBarIcon: (props) => <MaterialCommunityIcons {...props} name={icon} size={24} />,
-            tabBarBadge: name === 'Shopping' ? 5 : undefined
+            tabBarIcon: (props) => (
+              <View style={styles.iconContainer}>
+                <MaterialCommunityIcons {...props} name={icon} size={24} />
+                { name === 'Shopping' && 
+                // <Text style={styles.badge}>{numberOfCarts}</Text>
+                <Badge style={styles.badge}>{numberOfCarts}</Badge> 
+                }
+              </View>
+            )
           }}
         />
       ))}
@@ -45,3 +71,15 @@ const BottomTabs = () => {
   )
 }
 export default BottomTabs
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    flexDirection: 'row',
+  },
+    badge: {
+      position: 'absolute',
+      left: 8 * 2,
+      top: -4,
+      fontSize: 12,
+    }
+})

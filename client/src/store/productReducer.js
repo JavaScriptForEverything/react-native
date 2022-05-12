@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { axios, catchAsyncDispatch, filterArrayObject } from '../util'
+import asyncStorage from '@react-native-async-storage/async-storage'
 
 const { reducer, actions } = createSlice({
   name: 'product',
   initialState: {
     loading: false,
     error: '',
-    products: [],
-    product: {}
+    products: [],               // To store all products
+    product: {},                // To store findProductById
+    carts: [],                  // To store products as cart
   },
   reducers: {
     requested: (state, action) => ({
@@ -31,6 +33,11 @@ const { reducer, actions } = createSlice({
       // Method-2: Get Every thing just in single line, but it will override old fields if conflict.
       // ...action.payload                       // Don't Do this way, if not to override old fields
     }),
+    addToCart: (state, action) => ({
+      ...state,
+      loading: false,
+      carts: action.payload
+    })
 
   } // End of reducers
 })
@@ -54,4 +61,14 @@ export const getProducts = ( params={} ) => catchAsyncDispatch( async (dispatch)
     params: filterArrayObject(params, Object.keys(params), false)   // false: allowedFields
   })   
   dispatch( actions.getAllProduct(data) )
+}, actions.failed)
+
+export const addToCart = (cart) => catchAsyncDispatch( async (dispatch) => {
+  let carts = await asyncStorage.getItem('carts')
+      carts = JSON.parse(carts)
+      // carts = carts.concat(cart) 
+      carts = carts ? carts.concat(cart) : [cart]
+
+  dispatch(actions.addToCart(carts))  // add to store first
+  await asyncStorage.setItem('carts', JSON.stringify(carts))  // then save on localStorage
 }, actions.failed)

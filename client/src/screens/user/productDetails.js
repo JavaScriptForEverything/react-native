@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { StyleSheet, View, ScrollView, Image } from 'react-native'
 import { Caption, Subheading, Text, Title } from 'react-native-paper'
-import Swiper from 'react-native-swiper'
+import Swiper from 'react-native-swiper/src'
 import { BASE_URL } from '@env'
 
 import Rating from '../../components/rating'

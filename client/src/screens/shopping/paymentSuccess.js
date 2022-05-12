@@ -2,11 +2,14 @@ import { useState } from 'react'
 
 import { StyleSheet, View, Text } from 'react-native'
 import { Button } from 'react-native-paper'
+import { useSelector } from 'react-redux'
 import Alert from '../../components/alert'
+import StepperButton from '../../components/stepperButtons.js'
 
-const PaymentSuccessScreen = ({ step }) => {
+const PaymentSuccessScreen = () => {
+  
+  const { step } = useSelector(state => state.payment)
   const [ visible, setVisible ] = useState(true)
-  // console.log({ step })
 
   const description = ' Lorem, ipsum dolor sit amet consectetur adipisicing elit. A dolorem asperiores perspiciatis minus maiores error veritatis aperiam ullam vero deserunt consequatur eaque voluptatum, reiciendis tenetur sunt, repellat natus eius expedita!'
 
@@ -16,6 +19,12 @@ const PaymentSuccessScreen = ({ step }) => {
   const toggleHandler = () => {
     setVisible(!visible)
   }
+
+  const submitHandler = () => {
+    console.log('Payment Success Handler')
+    dispatch(nextClicked(step + 1))
+  }
+
 
   return (
     <View>
@@ -30,6 +39,7 @@ const PaymentSuccessScreen = ({ step }) => {
         // action={actionHandler}
       />
 
+      <StepperButton onPress={submitHandler} />
     </View>
   )
 }

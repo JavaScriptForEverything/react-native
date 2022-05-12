@@ -6,6 +6,7 @@ import { StyleSheet, View, ScrollView } from 'react-native'
 import { Avatar, Button, Divider, Text } from 'react-native-paper'
 import theme from '../theme/color'
 import StepContent from '../screens/shopping/stepContent'
+import StepperButton from './stepperButtons'
 
 const stepItems = [
   { label: 'Info' },
@@ -22,20 +23,6 @@ const Stepper = () => {
   // console.log({ isScreen })
 
 
-	const nextHandler = () => {
-    // if(step < 2) dispatch(nextClicked({ isInfo: true }))
-    // if(step === 2) dispatch(nextClicked({ isDetails: true }))
-    // if(step === 3) dispatch(nextClicked({ isPayment: true }))
-    // if(step === 4) dispatch(nextClicked({ isSuccess: true }))
-
-		if(step > 3) return 
-		setStep(step+1)
-
-	}
-	const prevHandler = () => {
-		if(step <= 1) return
-		setStep(step-1)
-	}
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.wrapperContainer}>
@@ -56,26 +43,10 @@ const Stepper = () => {
         <StepContent step={step} />
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Button 
-          disabled={step <= 1 }  // for tesing
-          // disabled={step <= 1 || step > 3}  // if step = 1 or payment success
-          mode='outlined' 
-          uppercase={false} 
-          onPress={prevHandler} 
-        >Prev</Button>
-
-        <Button 
-          disabled={step > 3} 
-          mode='outlined' 
-          uppercase={false} 
-          onPress={nextHandler} 
-          style={styles.btnItem}
-        >{ step >= 3 
-          ? (step > 3 ? 'Paid' : 'Pay') 
-          : 'Next'
-        }</Button>
-      </View>
+      {/* <StepperButton 
+        step={step}
+        setStep={setStep}
+      /> */}
     </ScrollView>
   )
 }
@@ -114,12 +85,4 @@ const styles = StyleSheet.create({
     marginVertical: 8 * 3,
   },
 
-	buttonContainer: {
-		flexDirection: 'row',
-		justifyContent: 'flex-end',
-		marginBottom: 16
-	},
-		btnItem: {
-			marginLeft: 8
-		}
 })
