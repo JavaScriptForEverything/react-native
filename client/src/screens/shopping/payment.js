@@ -17,6 +17,7 @@ const paymentMethods = [
 ]
 
 
+// used into  .src/screens/shopping/StepContent.js
 const PaymentScreen = () => {
   const dispatch = useDispatch()
   const [ extended, setExtended ] = useState(false)
@@ -33,10 +34,10 @@ const PaymentScreen = () => {
     setPaymentType(value)
   }
 
-  const submitHandler = () => {
-    console.log('Payment Submit Handler')
-    dispatch(nextClicked(step + 1))
-  }
+  // const submitHandler = () => {
+  //   console.log('Payment Submit Handler')
+  //   // dispatch(nextClicked(step + 1))
+  // }
 
   return (
     <View>
@@ -67,7 +68,7 @@ const PaymentScreen = () => {
       </View>
     
 
-      <StepperButton onPress={submitHandler} />
+      {/* <StepperButton onPress={submitHandler} /> */}
     </View>
   )
 }

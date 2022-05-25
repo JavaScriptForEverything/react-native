@@ -14,7 +14,7 @@ const Layout = ({ isStack=false, children }) => {
   const getCartItems = async () => {
     let localCartItems = await AsyncStorageLib.getItem('carts')
         localCartItems = JSON.parse(localCartItems)
-    localCartItems.length && dispatch( addToCart(localCartItems) )
+    localCartItems?.length && dispatch( addToCart(localCartItems) )
   }
   useEffect(() => getCartItems(), [])
 

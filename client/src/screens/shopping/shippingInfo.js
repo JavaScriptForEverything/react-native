@@ -20,6 +20,7 @@ const inputItems = [
 ]
 const itemObject = arrayObjectAsObject(inputItems)
 
+// used into  .src/screens/shopping/StepContent.js
 const ShippingInfoScreen = () => {
   const dispatch = useDispatch()
   const [ fields, setFields ] = useState({...itemObject})

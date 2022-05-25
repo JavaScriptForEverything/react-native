@@ -11,7 +11,7 @@ import theme from '../../theme/color'
 
 const ratingColor = '#ffc107'
 
-const ProductDetailsScreen = ({ route }) => {
+const ProductDetails = ({ route }) => {
   const [ ratingValue, setRatingValue ] = useState('')
 
 
@@ -32,6 +32,9 @@ const ProductDetailsScreen = ({ route }) => {
   const toAnswerHandler = (reviewId) => () => {
     // console.log({ reviewId })
   }
+
+  // console.log(product)
+  // return <Text>Product details</Text>
 
   return (
     <Layout>
@@ -108,7 +111,7 @@ const ProductDetailsScreen = ({ route }) => {
     </Layout>
   )
 }
-export default ProductDetailsScreen
+export default ProductDetails
 
 const styles = StyleSheet.create({
   content: {

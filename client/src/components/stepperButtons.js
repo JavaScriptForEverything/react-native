@@ -3,7 +3,7 @@ import { Button } from 'react-native-paper'
 import { useDispatch, useSelector } from 'react-redux'
 import { nextClicked } from '../store/paymentReducer'
 
-const StepperButton = ({ onPress }) => {
+const StepperButton = ({ disabled=false, onPress=f=>f }) => {
   const dispatch = useDispatch()
   const { step } = useSelector(state => state.payment)
 
@@ -27,7 +27,7 @@ const StepperButton = ({ onPress }) => {
         >Prev</Button>
 
         <Button 
-          disabled={step > 3} 
+          disabled={step > 3 || disabled} 
           mode='outlined' 
           uppercase={false} 
           onPress={nextHandler} 

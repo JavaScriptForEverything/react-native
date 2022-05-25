@@ -5,6 +5,7 @@ import { StyleSheet, View, Linking, Text } from 'react-native'
 import theme from '../../../theme/color'
 
 
+// used in : src/screens/shopping/payment.js
 const PaymentByBcash = () => {
 
   return (

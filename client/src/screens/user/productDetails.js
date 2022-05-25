@@ -37,10 +37,10 @@ const ProductDetails = ({ navigation, route: { params: { productId } } }) => {
   }
 
   const categoryPressHandler = (category) => {
-    console.log({ category })
+    // console.log({ category })
   }
   const locationCategoryPressHandler = (category) => {
-    console.log({ category })
+    // console.log({ category })
   }
 
   

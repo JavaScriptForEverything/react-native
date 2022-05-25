@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux'
 import Alert from '../../components/alert'
 import StepperButton from '../../components/stepperButtons.js'
 
+
+// used into  .src/screens/shopping/StepContent.js
 const PaymentSuccessScreen = () => {
   
   const { step } = useSelector(state => state.payment)

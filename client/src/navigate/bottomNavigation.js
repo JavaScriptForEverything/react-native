@@ -10,7 +10,9 @@ import theme from '../theme/color'
 import HomeStack from './homeStack'
 import AdminScreen from '../screens/admin'
 import UserStack from './userStack'
+// import ShoppingScreen from '../screens/shopping'
 import ShoppingStack from './shoppingStack'
+import { addToCart } from '../store/productReducer'
 
 const tabItems = [
   { name: 'Shopping', Component: ShoppingStack, icon: 'cart' },
@@ -23,18 +25,16 @@ const tabItems = [
 const Tab = createMaterialBottomTabNavigator()
 
 const BottomTabs = () => {
-  const [ localCarts, setLocalCarts ] = useState([])
   const { user } = useSelector( state => state.user )
   const { carts } = useSelector( state => state.product )
 
-  const cartItems = carts.length ? carts : localCarts
-  const numberOfCarts = cartItems?.length
+  const numberOfCarts = carts.length
   // console.log(numberOfCarts)
 
   const getCartItems = async () => {
     let localCarts =  await AsyncStorageLib.getItem('carts') 
         localCarts = JSON.parse( localCarts )
-    localCarts && setLocalCarts(localCarts)
+    localCarts && addToCart(localCarts)
   }
 
   useEffect(() => {

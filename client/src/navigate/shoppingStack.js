@@ -1,14 +1,15 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import ShoppingScreen from '../screens/shopping';
-import CartDetails from '../screens/shopping/cartDetails';
+import CartDetails from '../screens/shoppingDetails';
 
 const shoppingStackItems = [
-  { name: 'Cart Details', Component: CartDetails },
   { name: 'Shopping Screen', Component: ShoppingScreen },
+  { name: 'Cart Details', Component: CartDetails },
 ]
 
 const Stack = createStackNavigator()
 
+// used in src/navigate/bottomNavigation.js
 const ShoppingStack = () => {
   return (
     <Stack.Navigator>
@@ -17,7 +18,7 @@ const ShoppingStack = () => {
           name={name}
           component={Component}
           options={{
-            headerShown: false
+            headerShown: name !== 'Shopping Screen'
           }}
         />
       ))}

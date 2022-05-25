@@ -207,6 +207,5 @@ export const createProduct = (token, data) => catchAsyncDispatch( async (dispatc
 
   dispatch(actions.requested())
   const { data : { product }} = await axios(token).post('/api/products', data )
-  console.log(product)
-  dispatch(actions.addProduct())
+  // dispatch(actions.addProduct())
 }, actions.failed)

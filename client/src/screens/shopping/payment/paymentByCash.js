@@ -1,5 +1,6 @@
 import { StyleSheet, View, Text } from 'react-native'
 
+// used in : src/screens/shopping/payment.js
 const PaymentByCash = () => {
   return (
     <View>

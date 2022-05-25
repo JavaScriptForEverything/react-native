@@ -15,8 +15,7 @@ const Product = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
 	const { error, products, carts } = useSelector( state => state.product )
-	
-
+ 
 	useEffect(() => {
 		if(error) console.log(error)
 	}, [error])
@@ -26,8 +25,8 @@ const Product = () => {
   }
 
   const addToCartHandler = (product) => async () => {
-    const { _id, coverPhoto, name, summary, price } = product
-    const cart = { _id, coverPhoto, name, summary, price }
+
+    // return console.log(product)
 
     // await asyncStorage.removeItem('carts')  // then save on localStorage
     // dispatch(addToCart([]))
@@ -36,9 +35,9 @@ const Product = () => {
     const cartAlreadyAdded = carts.find(item => item._id === product._id)
     if(cartAlreadyAdded) return alert('This product already added')
 
-    dispatch(addToCart(carts.concat(cart)))
+    dispatch(addToCart(carts.concat(product)))
     dispatch(updateProduct({...product, isAddedToCart: true }))
-    await asyncStorage.setItem('carts', JSON.stringify(carts.concat(cart)))  // then save on localStorage
+    await asyncStorage.setItem('carts', JSON.stringify(carts.concat(product)))  // then save on localStorage
   }
 
   return (

@@ -3,13 +3,24 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
+/* used:  
+    . src/screents/user/addProduct.js       : <GoBack />
+    . src/screents/user/productDetails.js   : 
+        <GoBack 
+          showLike={true} 
+          liked={liked} 
+          setLiked={setLiked} 
+        />
+*/ 
+
 const GoBack = ({ showLike=false, liked=false, setLiked=f=>f }) => {
   const navigation = useNavigation()
 
   const backHandler = () => navigation.goBack()
+
   const likePressedHandler = () => {
     setLiked(!liked)
-    console.log('liked')
+    // console.log('liked')
   }
 
 

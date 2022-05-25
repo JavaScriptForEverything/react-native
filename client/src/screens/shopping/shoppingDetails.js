@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import AsyncStorageLib from '@react-native-async-storage/async-storage'
+import { addToCart, updateProduct } from '../../store/productReducer'
 import { nextClicked } from '../../store/paymentReducer'
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native'
 import { List, Text, Title } from 'react-native-paper'
@@ -8,6 +9,7 @@ import { BASE_URL } from '@env'
 import theme from '../../theme/color'
 import StepperButton from '../../components/stepperButtons.js'
 import { useNavigation } from '@react-navigation/native'
+import ListIconMenu from '../../components/listIconMenu'
 
 const title= 'Lorem ipsum dolor sit amet, consectetur'
 const coverPhoto = require('../../../assets/favicon.png')
@@ -16,25 +18,36 @@ const price = 54.32
 
 
 
-const cartItems = [
-  { _id: 'cart.id-1', coverPhoto, title, description, price },
-  { _id: 'cart.id-2', coverPhoto, title, description, price },
-  { _id: 'cart.id-3', coverPhoto, title, description, price },
-]
 
+// used into  .src/screens/shopping/StepContent.js
 const ShoppingDetailsScreen = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const { step } = useSelector(state => state.payment)
-  const { carts } = useSelector(state => state.product)
+  const { carts, products } = useSelector(state => state.product)
 
-  const deleteHandler = (id) => () => {
-    console.log({ id })
-    console.log('create new Stack here for product details again so that user can easyly go back')
 
-    navigation.navigate('Cart Details')
+  const openMenuItemHandler = (product) => {
+    navigation.navigate('Cart Details', { product })
+    // navigation.navigate('Product Details', { product })
   }
 
+  const removeListItem = (id) => async () => {
+    /* 3: remove extra property which we added on clicking addToCart handler
+    **    We added in top so that run before step-2: which may take some time
+    */ 
+    products.forEach(item => {
+      dispatch(updateProduct({ ...item, isAddedToCart: false }))
+    })
+
+    // 1: remove from redux store
+    const filteredCarts = carts.filter(item => item._id !== id)
+    dispatch(addToCart(filteredCarts))
+
+    // 2: remove from local store
+    await AsyncStorageLib.setItem('carts', JSON.stringify(filteredCarts))
+
+  }
 
   const submitHandler = () => {
     console.log('ShoppingDetails Need data from AddToCart localStorage')
@@ -46,7 +59,7 @@ const ShoppingDetailsScreen = () => {
       <Title style={styles.title}>Shopping Details</Title>
 
       {carts.map((cart, index, items) => (
-        <TouchableOpacity key={cart._id} onPress={deleteHandler(cart._id)}>
+        <TouchableOpacity key={cart._id} onPress={() => openMenuItemHandler(cart)}>
           <List.Item 
             title={cart.name}
             description={cart.summary || ''}
@@ -56,10 +69,16 @@ const ShoppingDetailsScreen = () => {
               style={{ aspectRatio: 1 }}      // 1 => W:x, H:x,   2 => W:x, H: x*2
             />}
             right={(props) => (
-                <Text style={{
-                  ...styles.right,
-                  marginTop: cart.description ? 10 : 14,
-                }} >${cart.price}</Text>
+              <View style={{ position: 'relative' }}>
+                {/* <ListIconMenu {...props} 
+                  product={cart}
+                  menuItems={menuItems} 
+                /> */}
+                <TouchableOpacity onPress={removeListItem(cart._id)}>
+                  <List.Icon {...props} icon='delete-outline' />
+                </TouchableOpacity>
+                <Text style={styles.right} >${cart.price}</Text>
+              </View>
             )}
             style={styles.listItem}
           />
@@ -80,7 +99,10 @@ const ShoppingDetailsScreen = () => {
         </View>
       </View>
       
-      <StepperButton onPress={submitHandler} />
+      <StepperButton 
+        disabled={!carts.length}
+        onPress={submitHandler} 
+      />
     </View>
   )
 }
@@ -99,7 +121,11 @@ const styles = StyleSheet.create({
     right: {
       marginLeft: 8 * 2,
       color: theme.palette.primary.dark,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+
+      position: 'absolute',
+      top: 8,
+      right: 8 * 5
     },
 
   totalContainer: {
@@ -116,6 +142,7 @@ const styles = StyleSheet.create({
       // flex: .4,
       flexDirection: 'row',
       alignItems: 'center',
+      marginRight: 8
     },
       heading: {
         color: theme.palette.primary.dark,

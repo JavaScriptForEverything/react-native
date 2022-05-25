@@ -73,7 +73,6 @@ export const getProducts = ( params={} ) => catchAsyncDispatch( async (dispatch)
 
 // used into src/screens/home/product.js  : addtoCartHandler
 export const addToCart = (carts) => catchAsyncDispatch( async (dispatch) => {
-  console.log(carts)
   dispatch(actions.addToCart(carts))  // add to store first
 }, actions.failed)
 
