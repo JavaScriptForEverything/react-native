@@ -1,14 +1,11 @@
 import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { List, RadioButton, Subheading, Text, Title } from 'react-native-paper'
+import { List, RadioButton, Title } from 'react-native-paper'
 
 import theme from '../../theme/color'
-import StepperButton from '../../components/stepperButtons.js'
 import PaymentByBcash from './payment/paymentByBcash'
 import PaymentByCard from './payment/paymentByCard'
 import PaymentByCash from './payment/paymentByCash'
-import { useDispatch, useSelector } from 'react-redux'
-import { nextClicked } from '../../store/paymentReducer'
 
 const paymentMethods = [ 
   { name: 'Card',   label: 'Card Payment', Component: PaymentByCard },
@@ -19,25 +16,11 @@ const paymentMethods = [
 
 // used into  .src/screens/shopping/StepContent.js
 const PaymentScreen = () => {
-  const dispatch = useDispatch()
   const [ extended, setExtended ] = useState(false)
   const [ paymentType, setPaymentType ] = useState('Card')
 
-  const { step } = useSelector(state => state.payment)
-
-  const paymentAccordionHandler = (newExtended) => {
-    setExtended(newExtended)
-  }
-
-  const changeHandler = (value) => {
-    console.log(value)
-    setPaymentType(value)
-  }
-
-  // const submitHandler = () => {
-  //   console.log('Payment Submit Handler')
-  //   // dispatch(nextClicked(step + 1))
-  // }
+  const paymentAccordionHandler = (newExtended) => setExtended(newExtended)
+  const changeHandler = (value) => setPaymentType(value)
 
   return (
     <View>
@@ -67,8 +50,6 @@ const PaymentScreen = () => {
         ))}
       </View>
     
-
-      {/* <StepperButton onPress={submitHandler} /> */}
     </View>
   )
 }

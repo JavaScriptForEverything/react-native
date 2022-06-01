@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { saveInfo, nextClicked } from '../../store/paymentReducer'
 import { arrayObjectAsObject, formValidator } from '../../util'
 
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Alert } from 'react-native'
 import { HelperText, TextInput, Title } from 'react-native-paper'
 import AsyncStorageLib from '@react-native-async-storage/async-storage'
 import theme from '../../theme/color'
@@ -26,13 +26,15 @@ const ShippingInfoScreen = () => {
   const [ fields, setFields ] = useState({...itemObject})
   const [ fieldsError, setFieldsError ] = useState({...itemObject})
   
+  
   const { info, step } = useSelector( state => state.payment )
   const fn = async() => {
-    const info = JSON.parse( await AsyncStorageLib.getItem('info'))
-    setFields(info)
+    let info =  await AsyncStorageLib.getItem('info')
+        info = JSON.parse( info )
+    setFields({ ...info })
   }
 
-  // console.log(info)
+  // console.log({ fields })
 
   useEffect(() => {
     fn()
@@ -40,12 +42,21 @@ const ShippingInfoScreen = () => {
 
   
   const changeHandler = (name) => (text) => {
-    setFields({ ...fields, [name]: text})
     formValidator(fields, setFieldsError)
+    setFields({ ...fields, [name]: text})
   }
 
   const submitHandler = () => {
-    if( !formValidator(fields, setFieldsError) ) return
+    const isValidated = formValidator(fields, setFieldsError)
+
+    // console.log(fields)
+    if( !true ) return Alert.alert(
+      'Field Error', 
+      'Every field must be filled up', 
+      [
+        { text: 'Close', onPress:(f) => f }
+      ]
+    )
     
     dispatch(saveInfo(fields))    // save into store + save on localStorage
     dispatch(nextClicked(step + 1))

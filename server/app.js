@@ -13,6 +13,7 @@ const { globalErrorHandler } = require('./util')
 const productRouter = require('./routes/productRoute')
 const userRouter = require('./routes/userRoute')
 const reviewRouter = require('./routes/reviewRoute')
+const paymentRouter = require('./routes/paymentRoute')
 
 
 
@@ -52,6 +53,7 @@ app.use(morgan('dev'))                      // => To indicate is requested or no
 app.use('/api/products', productRouter)     // => /api/products
 app.use('/api/users', userRouter)           // => /api/users
 app.use('/api/reviews', reviewRouter)       // => /api/reviews
+app.use('/api/payments', paymentRouter)     // => /api/payments
 
 
 // global routes: used for unused routes instead of throw error or none JSON response.

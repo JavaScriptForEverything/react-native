@@ -24,6 +24,7 @@
     "nanoid": "^3.3.4",
     "nodemailer": "^6.7.3",
     "sharp": "^0.30.3",
+    "stripe": "^9.5.0",
     "validator": "^13.7.0",
     "xss-clean": "^0.1.1"
   }
