@@ -1,13 +1,9 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const Payment = require('../models/paymentModel')
-const { catchAsync, appError } = require('../util')
+const { catchAsync, appError, sendMail } = require('../util')
 
-// const client_secret = 'pi_3L5mX3JhjiJCVOZf0hSPFUzf_secret_vJrq6DQcVKhRmrnhkPNb0vDtx'
-
-
+  // .get('/api/payments', paymentController.getStripePublishableKey)
 exports.getStripePublishableKey = (req, res, next) => {
-  // console.log({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY })
-
   res.status(200).json({
     status: 'success',
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY
@@ -15,23 +11,16 @@ exports.getStripePublishableKey = (req, res, next) => {
 }
 
 
-// src/store/productReducer.js : 
-exports.addPayment = async (req, res, next) => {
+// .post('/api/payments', authController.protect, paymentController.addPayment)
+exports.addPayment = catchAsync( async (req, res, next) => {
   const { amount, currency } = req.body
 
-  // console.log(req.user)
-  // return res.status(201).json({ status: 'success', clientSecret: 'secret' })
-
-  // if(!amount) return next(appError('No amount given', 403, 'PaymentError'))
-  
-  // const paymentId = 'pi_3L5mX3JhjiJCVOZf0hSPFUzf'
-  // const { client_secret, id } = await stripe.paymentIntents.retrieve(paymentId)
-  
   const { client_secret, id } = await stripe.paymentIntents.create({
     // payment_method_types: ['card'],    // default
     amount: amount * 100,
     currency: 'usd'
   })
+  if( !id ) return next(appError('PaymentIntents create is failed', 400, 'PaymentError'))
 
   const data = {
     userId: req.user.id,
@@ -40,12 +29,46 @@ exports.addPayment = async (req, res, next) => {
     clientSecret: client_secret,
     paymentIntentId: id
   }
-
-  // const payment = await Payment.create(data)
-  
+  const payment = await Payment.create(data)    // same payment create into database
 
   res.status(201).json({
     status: 'success',
     clientSecret: client_secret
   })
-}
+})
+
+
+
+// .post('/api/payments/cash-on-delivery', authController.protect, paymentController.cashOnDelivery)
+exports.cashOnDelivery = catchAsync( async(req, res, next) => {
+  const { amount, currency='usd' } = req.body
+  const userEmail = req.body.email || req.user.email
+
+	const data = { userId: req.user.id, currency, amount }
+  const payment = await Payment.create(data)    // same payment create into database
+
+  try {
+	  await sendMail({
+	  	from: userEmail,
+	  	to: 'JavascriptForEverything@gmail.com',
+	  	subject: 'Cash On Delivery',
+	  	text: `Requested for product with given user details: ${JSON.stringify({
+	  		...req.body,
+	  		...data
+	  	})}`
+	  })
+  } catch(err) {
+		res.status(400).json({
+			status: 'failed',
+			message: err.message
+		})
+
+  }
+
+	res.status(200).json({
+		status: 'success',
+		payment,
+		message: `Your Order received, message is sent to ${userEmail}`
+	})
+})
+

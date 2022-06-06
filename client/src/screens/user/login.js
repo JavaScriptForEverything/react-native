@@ -19,7 +19,7 @@ const inputItemsAsObject = arrayObjectAsObject(inputItems, 'name')
 const LoginScreen = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
-  const { error, loading, authenticated, user } = useSelector(state => state.user)
+  const { error, loading, token, authenticated, user } = useSelector(state => state.user)
 
   const [ showPassword, setShowPassword ] = useState(false)
   const [ fields, setFields ] = useState({ ...inputItemsAsObject })
@@ -27,10 +27,13 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if(error) console.log(error)
-    if(authenticated) {
-      // navigation.navigate('Profile')
-    }
   }, [error, authenticated, user])
+
+  useEffect(() => {
+    if(token) return navigation.navigate('Profile')
+    navigation.navigate('Login')
+  }, [token])
+
 
   const signupHandler = () => navigation.navigate('Signup')
   const forgotPasswordHandler = () => navigation.navigate('Forgot Password')

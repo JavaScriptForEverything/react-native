@@ -10,7 +10,7 @@ import PaymentByCash from './payment/paymentByCash'
 const paymentMethods = [ 
   { name: 'Card',   label: 'Card Payment', Component: PaymentByCard },
   { name: 'bCash',  label: 'Bcash Mobile', Component: PaymentByBcash },
-  { name: 'Cash',   label: 'Cash on Delevery', Component: PaymentByCash }, 
+  { name: 'Cash',   label: 'Cash on Delivery', Component: PaymentByCash }, 
 ]
 
 

@@ -45,7 +45,6 @@ const PaymentByCard = () => {
 
   const cardChangeHandler = (newCardDetails) => setCardDetails(newCardDetails)
   const submitHandler = async () => {
-
     // Step-1: 
     if(!cardDetails.complete) return Alert.alert(
       'Card Error',

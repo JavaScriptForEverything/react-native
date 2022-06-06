@@ -22,12 +22,14 @@ const { actions, reducer } = createSlice({
       ...state,                 
       loading: true,           
       error: '',              
-      message: ''
+      message: '',
+      status: '',
     }),
     failed: (state, action) => ({
       ...state, 
       loading: false,       
       message: '',
+      status: '',
       error: action.payload 
     }),
 
@@ -43,7 +45,14 @@ const { actions, reducer } = createSlice({
       ...state,
       loading: false,
       clientSecret: action.payload      
-    })
+    }),
+    cashOnDelivery: (state, action) => ({
+      ...state,
+      loading: false,
+      status: action.payload.status,
+      message: action.payload.message
+    }),
+
 
   } // End of reducers
 })
@@ -100,6 +109,8 @@ export const getStripePublishableKey = () => catchAsyncDispatch(async (dispatch)
 //   }
 // }
 
+
+// /src/screens/shopping/payment/paymentByCard.js  : submitHandler
 export const addPayment = async (token, fieldsData ) => {
   try {
     const { data: { clientSecret } } = await axios(token).post('/api/payments', fieldsData)
@@ -109,3 +120,14 @@ export const addPayment = async (token, fieldsData ) => {
     console.log(err.message)
   }
 }
+
+
+// /src/screens/shopping/payment/paymentByCash.js  : orderHandler
+export const orderForCashOnDelivery = (token, info) => catchAsyncDispatch(async (dispatch) => {
+  if(!token) return console.log('orderForCashOnDelivery has no token')
+  dispatch(actions.requested())
+
+  const { data } = await axios(token).post('/api/payments/cash-on-delivery', info)
+  dispatch(actions.cashOnDelivery(data))
+
+}, actions.failed)

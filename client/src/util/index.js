@@ -126,3 +126,16 @@ export const humanReadableFileSize = (bytes, si=true, dp=1) => {
   return bytes.toFixed(dp) + ' ' + units[u];
 }
 
+
+// toCapitalize('hello ')
+// toCapitalize('hello world')
+// toCapitalize(213)
+export const toCapitalize = (str) => {
+	if(typeof str !== 'string') return str
+
+	const strings = str.split(' ').map( str => {
+		return str.replace(/./, match => match.toUpperCase().trim() )
+	})
+
+	return strings.join(' ')
+}

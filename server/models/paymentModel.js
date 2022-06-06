@@ -7,12 +7,12 @@ const paymentSchema = Schema({
   },
   paymentIntentId: {
     type: String,
-    required: true,
+    // required: true,
   },
   clientSecret: {
     type: String,
-    required: true,
-    unique: true
+    // required: true,
+    // unique: true
   },
   confirm: {
     type: Boolean,

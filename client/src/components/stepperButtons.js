@@ -14,7 +14,7 @@ const StepperButton = ({ loading=false, disabled=false, onPress=f=>f }) => {
     onPress()
 	}
 	const prevHandler = async () => {
-    if(step >= 3 ) {
+    if(step > 3 ) {
       dispatch(nextClicked(1))  // Reset step = 1
       await AsyncStorageLib.removeItem('carts')     // remove carts
       dispatch(addToCart([]))
@@ -32,7 +32,7 @@ const StepperButton = ({ loading=false, disabled=false, onPress=f=>f }) => {
           mode='outlined' 
           uppercase={false} 
           onPress={prevHandler} 
-        >{ step >= 3 
+        >{ step > 3 
           ? 'Done' : 'Prev' 
         }</Button>
 
