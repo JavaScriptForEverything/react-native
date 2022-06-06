@@ -11,7 +11,7 @@ const listItems = [
   { icon: 'account', title: 'User Profile' },
   { icon: 'account', title: 'About Me' },
   { icon: 'account-box', title: 'Contact Us' },
-  { icon: 'help', title: 'Help' },
+  // { icon: 'help', title: 'Help' },
 ]
 
 const DrawerContent = () => {
@@ -61,9 +61,9 @@ const DrawerContent = () => {
             <List.Item
               title={title}
               left={(props) => <List.Icon {...props} icon={icon} />}
-              right={(props) => (
-                <Badge visible={!!index} size={24} style={styles.badgeStyle}> {index} </Badge>
-              )}
+              // right={(props) => (
+              //   <Badge {...props} size={24} style={styles.badgeStyle}> {index + 1} </Badge>
+              // )}
             />
             <Divider style={{ 
               borderBottomWidth: 1,

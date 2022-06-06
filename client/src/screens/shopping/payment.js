@@ -19,7 +19,7 @@ const PaymentScreen = () => {
   const [ extended, setExtended ] = useState(false)
   const [ paymentType, setPaymentType ] = useState('Card')
 
-  const paymentAccordionHandler = (newExtended) => setExtended(newExtended)
+  const paymentAccordionHandler = () => setExtended(!extended)
   const changeHandler = (value) => setPaymentType(value)
 
   return (

@@ -15,11 +15,10 @@ import ShoppingStack from './shoppingStack'
 import { addToCart } from '../store/productReducer'
 
 const tabItems = [
-  { name: 'Shopping', Component: ShoppingStack, icon: 'cart' },
+  { name: 'User', Component: UserStack, icon: 'account' },
   { name: 'Home', Component: HomeStack, icon: 'home' },
   { name: 'Admin', Component: AdminScreen, icon: 'cog' },
-  { name: 'User', Component: UserStack, icon: 'account' },
-  // { name: 'User', Component: UserStack, icon: 'account' },
+  { name: 'Shopping', Component: ShoppingStack, icon: 'cart' },
 ]
 
 const Tab = createMaterialBottomTabNavigator()
