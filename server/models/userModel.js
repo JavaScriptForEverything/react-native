@@ -54,7 +54,11 @@ const userSchema = new Schema({
 			default: 'static/images/users/default.jpg'
 		}
 	},
-	phone: String
+	phone: String,
+	title: {
+		type: String,
+		default: 'Web Developer'
+	}
 
 }, {
 	timestamps: true,

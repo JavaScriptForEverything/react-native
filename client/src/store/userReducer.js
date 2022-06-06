@@ -81,6 +81,11 @@ const { reducer, actions } = createSlice({
       loading: false,
       resetPasswordMessage: action.payload
     }),
+    updateMe: (state, action) => ({
+      ...state,
+      loading: false,
+      user: action.payload
+    }),
 
     getAllUserProducts: (state, action) => ({
       ...state,
@@ -208,4 +213,13 @@ export const createProduct = (token, data) => catchAsyncDispatch( async (dispatc
   dispatch(actions.requested())
   const { data : { product }} = await axios(token).post('/api/products', data )
   // dispatch(actions.addProduct())
+}, actions.failed)
+
+
+
+// /src/screens/user/aboutMe.js
+export const updateMe = (token, fieldData) => catchAsyncDispatch(async (dispatch) => {
+  dispatch(actions.requested())
+  const { data: { user } } = await axios(token).patch('/api/users/me', fieldData)
+  dispatch(actions.updateMe( user ))
 }, actions.failed)

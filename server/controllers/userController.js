@@ -1,3 +1,8 @@
+const path = require('path')
+const fs = require('fs')
+const { promisify } = require('util')
+
+const { nanoid } = require('nanoid')
 const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
 const Product = require('../models/productModel')
@@ -96,12 +101,64 @@ exports.getUserById = catchAsync( async (req, res, next) => {
 // })
 
 
-exports.updateUserById = (req, res, next) => {
+exports.updateUserById = async (req, res, next) => {
+	// req.body.avatar.secure_url = undefined
 
-	res.status(201).json({
-		status: 'success',
-		user: req.body
-	})
+	// console.log(req.body)
+	// return res.status(200).json({ body: res.body })
+
+	try {
+		const filteredBody = filterArrayObject(req.body, ['role'])
+		const { avatar } = req.body
+
+		if(avatar && avatar.secure_url) {
+
+			const base64Image = avatar.secure_url.split(';base64,').pop()
+			const buff = Buffer.from(base64Image, 'base64')
+
+			const filename = avatar.name
+			const destination = path.join(__dirname, '../static/images/users', filename)
+			await promisify(fs.writeFile)(destination, buff)
+
+			// console.log(req.user)
+
+			const body = {
+				...filteredBody,
+				avatar: {
+					public_id : nanoid(),
+					name: filename,
+					secure_url: `static/images/users/${filename}`
+				}
+			}
+			const user = await User.findByIdAndUpdate(req.user._id, body, { new: true, runValidators: true })
+			if(!user) return next(appError('No user Updated'))
+
+			res.status(201).json({
+				status: 'success',
+				user
+			})
+
+		} else {
+			const user = await User.findByIdAndUpdate(req.user._id, filteredBody, { new: true, runValidators: true })
+			if(!user) return next(appError('No user Updated'))
+
+			res.status(201).json({
+				status: 'success',
+				user
+			})
+
+		}
+
+	} catch (err) {
+		const filename = req.body.avatar.name
+		const destination = path.join(__dirname, '../static/images/users', filename)
+
+		fs.existsSync(destination) && fs.unlink(destination, err => console.log(err.message) )
+
+		// console.log(err)
+		next(appError(err.message))
+	}
+
 }
 
 
