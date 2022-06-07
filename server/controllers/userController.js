@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const { promisify } = require('util')
+const sharp = require('sharp')
 
 const { nanoid } = require('nanoid')
 const bcrypt = require('bcryptjs')
@@ -102,23 +103,25 @@ exports.getUserById = catchAsync( async (req, res, next) => {
 
 
 exports.updateUserById = async (req, res, next) => {
-	// req.body.avatar.secure_url = undefined
-
-	// console.log(req.body)
-	// return res.status(200).json({ body: res.body })
-
 	try {
 		const filteredBody = filterArrayObject(req.body, ['role'])
 		const { avatar } = req.body
 
 		if(avatar && avatar.secure_url) {
 
+			// 1. convert base64 dataURL to Buffer
 			const base64Image = avatar.secure_url.split(';base64,').pop()
 			const buff = Buffer.from(base64Image, 'base64')
 
 			const filename = avatar.name
 			const destination = path.join(__dirname, '../static/images/users', filename)
-			await promisify(fs.writeFile)(destination, buff)
+
+			// 2. Save buffer as image file in local Hard Disk
+			// await promisify(fs.writeFile)(destination, buff) 	// Method-1: just save
+			await sharp(buff) 																		// Method-2: resize and save
+				.resize(200, 200)
+				.toFormat('jpeg')
+				.toFile(destination)
 
 			// console.log(req.user)
 
@@ -130,6 +133,15 @@ exports.updateUserById = async (req, res, next) => {
 					secure_url: `static/images/users/${filename}`
 				}
 			}
+
+			// 3. find old file and delete that
+			const oldUser = await User.findById(req.user._id)
+			const oldFile = path.resolve(oldUser.avatar.secure_url) 									// Method-2:
+			// const oldFile = path.join(__dirname, '..', oldUser.avatar.secure_url) 	// Method-1:
+			const isExists = await promisify(fs.exists)(oldFile)
+			if(isExists) await promisify(fs.unlink)(oldFile)
+
+			// 4. add new file's path to database
 			const user = await User.findByIdAndUpdate(req.user._id, body, { new: true, runValidators: true })
 			if(!user) return next(appError('No user Updated'))
 
@@ -155,8 +167,8 @@ exports.updateUserById = async (req, res, next) => {
 
 		fs.existsSync(destination) && fs.unlink(destination, err => console.log(err.message) )
 
-		// console.log(err)
-		next(appError(err.message))
+		console.log(err)
+		// next(appError(err.message))
 	}
 
 }

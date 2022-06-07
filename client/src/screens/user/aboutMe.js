@@ -75,7 +75,7 @@ const AboutMe = () => {
               <MaterialCommunityIcons style={styles.uploadIcon} name='cloud-upload-outline' size={32} color='dodgerblue'  />
             </Pressable>
           </View>
-          <Subheading style={styles.avatarTitle}>{user.name}</Subheading>
+          <Subheading style={styles.avatarTitle}>{user.name} </Subheading>
           <Caption>Web Developer | App Developer</Caption>
         </View>
 
