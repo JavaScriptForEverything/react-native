@@ -2,7 +2,8 @@ import { useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { arrayObjectAsObject, formValidator } from '../../util'
-import { logOnTo } from '../../store/userReducer'
+import { logOnTo, modifyToken } from '../../store/userReducer'
+import localStorage from '@react-native-async-storage/async-storage'
 
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Button, HelperText, Text, TextInput, Title } from 'react-native-paper'
@@ -25,12 +26,20 @@ const LoginScreen = () => {
   const [ fields, setFields ] = useState({ ...inputItemsAsObject })
   const [ fieldsError, setFieldsError ] = useState({ ...inputItemsAsObject })
 
+  const protecte = async () => {
+    const oldToken = await localStorage.getItem('token')
+    dispatch( modifyToken(oldToken) )
+  }
+  useEffect(() => {
+    protecte()
+  }, [])
+
   useEffect(() => {
     if(error) console.log(error)
   }, [error, authenticated, user])
 
   useEffect(() => {
-    if(token) return navigation.navigate('Profile')
+    // if(token) return navigation.navigate('Profile')
     navigation.navigate('Login')
   }, [token])
 

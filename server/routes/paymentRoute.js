@@ -11,3 +11,5 @@ router.post('/cash-on-delivery', paymentController.cashOnDelivery)
 router.route('/')
   .get(paymentController.getStripePublishableKey)
   .post(authController.protect, paymentController.addPayment)
+
+router.get('/:userId', paymentController.getUserPayments)

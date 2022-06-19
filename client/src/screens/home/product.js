@@ -20,8 +20,8 @@ const Product = () => {
 		if(error) console.log(error)
 	}, [error])
 
-  const detailsHandler = (product) => () => {
-    navigation.navigate('Product Details', { product })
+  const detailsHandler = (productId) => () => {
+    navigation.navigate('Product Details', { productId })
   }
 
   const addToCartHandler = (product) => async () => {
@@ -45,7 +45,7 @@ const Product = () => {
       { products.map(product => (
         <View key={product._id} style={styles.item}>
           <Surface style={styles.card}>
-            <TouchableOpacity onPress={detailsHandler(product)} >
+            <TouchableOpacity onPress={detailsHandler(product._id)} >
               <Image source={{ 
                 uri: `${BASE_URL}/${product.coverPhoto.secure_url}`,
                 height: 100,
@@ -54,7 +54,7 @@ const Product = () => {
               }} />
             </TouchableOpacity>
             <View style={styles.cardContent}>
-            <TouchableOpacity onPress={detailsHandler(product)} >
+            <TouchableOpacity onPress={detailsHandler(product._id)} >
               <Title>{product.name}</Title>
             </TouchableOpacity>
               <Text style={styles.price}>${product.price?.toFixed(2)}</Text>

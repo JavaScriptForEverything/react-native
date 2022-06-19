@@ -7,21 +7,24 @@ import ResetPassword from '../screens/user/resetPassword'
 import ProfileDrawer from './userDrawer'
 
 import Dashboard from '../screens/user/dashboard'
+import { useSelector } from 'react-redux'
 
 
 const stackItems = [
+  { name: 'Profile', Component: ProfileDrawer },
   { name: 'Login', Component: Login },
   { name: 'Signup', Component: Signup },
   { name: 'Forgot Password', Component: ForgotPassword },
   { name: 'Reset Password', Component: ResetPassword },
 
-  { name: 'Profile', Component: ProfileDrawer },
   { name: 'Dashboard', Component: Dashboard },
 ]
 
 const Stack = createStackNavigator()
 
 const UserStack = () => {
+  const { token } = useSelector(state => state.user)
+
   return (
     <Stack.Navigator
       // initialRouteName='Profile'

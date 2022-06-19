@@ -1,23 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getProductById } from '../../store/productReducer'
 import { BASE_URL } from '@env'
+
 import { StyleSheet, ScrollView, Image, View, TouchableOpacity } from 'react-native'
-import { Avatar, Text, List, Subheading, Title, Button } from 'react-native-paper'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Avatar, Text, List, Subheading, Title, Button, ActivityIndicator } from 'react-native-paper'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 
+import NotFound from '../../components/notFound'
 import Rating from '../../components/rating'
-
 import Layout from '../../layout'
 import theme from '../../theme/color'
 
 const ratingColor = '#ffc107'
 
-const ProductDetailsScreen = ({ route }) => {
+const ProductDetailsScreen = ({ route, navigation }) => {
+  const productId = route.params.productId 
+
+  const dispatch = useDispatch()
   const [ ratingValue, setRatingValue ] = useState('')
+  const { loading, product } = useSelector( state => state.product )
 
-
-  const product = route.params?.product || {}
-  // console.log(product.rating)
-  // console.log(product.reviews)
+  useEffect(() => {
+    productId && dispatch(getProductById(productId))
+  }, [])
 
   const ratingHandler = (newRatingValue) => {
     setRatingValue(newRatingValue)
@@ -33,8 +39,32 @@ const ProductDetailsScreen = ({ route }) => {
     // console.log({ reviewId })
   }
 
+  if(loading) return <ActivityIndicator 
+    color='dodgerblue' 
+    size={42} 
+    style={{
+      flex: 1,                          // take full column
+      justifyContent: 'center'          // then center
+    }}
+  />
+
+  if(!Object.keys(product).length) return <NotFound noResultFor='Product Not Found' />
   return (
-    <Layout>
+    <Layout isStack={true} >
+
+      {route.name !== 'Product Details' && (
+        <View style={styles.backBarContainer}>
+          <TouchableOpacity onPress={navigation.goBack}>
+          <MaterialCommunityIcons 
+            color='black'
+            size={24}
+            name='arrow-left'
+          />
+          </TouchableOpacity>
+            <Text style={styles.goBacktext}>Back</Text>
+        </View>
+      )}
+
       <ScrollView>
         <Image source={{
           uri: `${BASE_URL}/${product.coverPhoto.secure_url}`,
@@ -43,6 +73,7 @@ const ProductDetailsScreen = ({ route }) => {
           flex: 1,
         }}
         />
+
         <View style={styles.content}>
           <Title style={styles.title}>{product.name}</Title>
           <Subheading style={styles.summary}>{product.summary}</Subheading>
@@ -55,52 +86,52 @@ const ProductDetailsScreen = ({ route }) => {
               // onPress={ratingHandler}
               // disabled={true}
             />
-            <Text style={styles.ratingItem}> ({product.reviews.length} reviews)</Text>
+            <Text style={styles.ratingItem}> ({product.reviews?.length} reviews)</Text>
           </View>
 
           <Text style={styles.description}>{product.description}</Text>
 
-          {product.reviews.map(review => (
+          {product.reviews && product.reviews.map(review => (
+            <View style={styles.reviewContainer} key={review._id}>
+              <View style={styles.reviewLeftSection}>
+                <Avatar.Image source={{ uri: `${BASE_URL}/${product.coverPhoto.secure_url}`}} />
+              </View>
+              
 
-          <View style={styles.reviewContainer} key={review._id}>
-            <View style={styles.reviewLeftSection}>
-              <Avatar.Image source={{ uri: `${BASE_URL}/${product.coverPhoto.secure_url}`}} />
+              <View style={styles.reviewRightSection}>
+                <View style={styles.reviewRightItem}>
+                  <Subheading style={styles.reviewTitle}>{review.user?.name}</Subheading>
+                  <Text style={styles.reviewDate}>4 days ago</Text>
+                </View>
+
+                <View style={styles.messageContainer}>
+                  <Text style={styles.reviewMessage}>{review.review}</Text>
+                </View>
+
+                <View style={styles.reviewBottomContainer}>
+                  <View style={styles.reviewBottomItem}>
+                    <TouchableOpacity onPress={likeHandler(review._id)}>
+                      <MaterialCommunityIcons name='thumb-up-outline' size={24} color='grey'  />
+                    </TouchableOpacity>
+                    <Text style={styles.itemValue}>347</Text>
+                  </View>
+
+                  <View style={styles.reviewBottomItem}>
+                    <TouchableOpacity onPress={unLikeHandler(review._id)}>
+                      <MaterialCommunityIcons name='thumb-down-outline' size={24} color='grey'  />
+                    </TouchableOpacity>
+                    <Text style={styles.itemValue}>2</Text>
+                  </View>
+
+                  <View style={styles.reviewBottomItem}>
+                    <TouchableOpacity onPress={toAnswerHandler(review._id)}>
+                      <Button color={theme.palette.text.secondary} >To Answer</Button>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+              </View>
             </View>
-            
-            <View style={styles.reviewRightSection}>
-              <View style={styles.reviewRightItem}>
-                <Subheading style={styles.reviewTitle}>{review.user.name}</Subheading>
-                <Text style={styles.reviewDate}>4 days ago</Text>
-              </View>
-
-              <View style={styles.messageContainer}>
-                <Text style={styles.reviewMessage}>{review.review}</Text>
-              </View>
-
-              <View style={styles.reviewBottomContainer}>
-                <View style={styles.reviewBottomItem}>
-                  <TouchableOpacity onPress={likeHandler(review._id)}>
-                    <MaterialCommunityIcons name='thumb-up-outline' size={24} color='grey'  />
-                  </TouchableOpacity>
-                  <Text style={styles.itemValue}>347</Text>
-                </View>
-
-                <View style={styles.reviewBottomItem}>
-                  <TouchableOpacity onPress={unLikeHandler(review._id)}>
-                    <MaterialCommunityIcons name='thumb-down-outline' size={24} color='grey'  />
-                  </TouchableOpacity>
-                  <Text style={styles.itemValue}>2</Text>
-                </View>
-
-                <View style={styles.reviewBottomItem}>
-                  <TouchableOpacity onPress={toAnswerHandler(review._id)}>
-                    <Button color={theme.palette.text.secondary} >To Answer</Button>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-            </View>
-          </View>
           ))}
 
         </View>
@@ -111,6 +142,17 @@ const ProductDetailsScreen = ({ route }) => {
 export default ProductDetailsScreen
 
 const styles = StyleSheet.create({
+  backBarContainer: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 8*2,
+  },
+    goBacktext: {
+      fontSize: 20,
+      marginLeft: 8 * 3,
+    },
+
   content: {
     paddingHorizontal: 8
   },

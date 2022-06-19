@@ -13,13 +13,16 @@ const { reducer, actions } = createSlice({
     authenticated: '',
     user: {
       avatar: {},
+      payments: [],
+      products: []
     },
     users: [],
     isSignedUp: false,
     forgotPasswordMessage: '',
     resetPasswordMessage: '',
 
-    products: [],                      // .find({ user: req.user._id })
+    products: [],                       // .find({ user: req.user._id })
+    product: {}                         // for userProductDetails
     // images: [],
     // coverPhoto: {}
   },
@@ -35,6 +38,10 @@ const { reducer, actions } = createSlice({
       loading: false,           // To stop loading effect
       message: '',
       error: action.payload     // make sure payload data MUST BE STRING, Object throw error
+    }),
+    modifyToken: (state, action) => ({
+      ...state,
+      token: action.payload
     }),
     getAllUsers: (state, action) => ({
       ...state,
@@ -67,9 +74,12 @@ const { reducer, actions } = createSlice({
     userGot: (state, action) => ({
       ...state,
       loading: false,
-      user: action.payload.user,           // => { data: { user }}
-      token: action.payload.token,         // update token from asyncStorage
-      authenticated: true
+      user: {
+        ...state.user,
+        ...action.payload,                // => { data: { user }}
+      }
+      // token: action.payload.token,      // update token from asyncStorage
+      // authenticated: true
     }),
     passwordForgotten: (state, action) => ({
       ...state,
@@ -84,7 +94,25 @@ const { reducer, actions } = createSlice({
     updateMe: (state, action) => ({
       ...state,
       loading: false,
-      user: action.payload
+      user: {
+        ...action.payload
+      }
+    }),
+    updateMyPayments: (state, action) => ({
+      ...state,
+      loading: false,
+      user: {
+        ...state.user,
+        payments: action.payload
+      }
+    }),
+    getUserProducts: (state, action) => ({
+      ...state,
+      loading: false,
+      user: {
+        ...state.user,
+        products: action.payload
+      }
     }),
 
     getAllUserProducts: (state, action) => ({
@@ -93,6 +121,12 @@ const { reducer, actions } = createSlice({
       products: action.payload        // <= { data: { products }}
     }),
 
+    getProductById: (state, action) => ({
+      ...state,
+      loading: false,
+      product: action.payload        
+
+    }),
     addProduct: (state, action) => ({
       ...state,
       loading: false,
@@ -105,6 +139,9 @@ const { reducer, actions } = createSlice({
 })
 export default reducer
 
+
+// /src/screens/user/login.js   : => load token from asyncStorage and modify user.token 
+export const modifyToken = (token) => dispatch => dispatch(actions.modifyToken(token))
 
 
 /* dispatch( getProducts(filterObj={}) )       
@@ -172,7 +209,7 @@ export const getMe = (token) => catchAsyncDispatch( async (dispatch) => {
 
   dispatch(actions.requested())
   const { data: { user }} = await axios(token).get('/api/users/me')
-  dispatch(actions.userGot({ user, token }))
+  dispatch(actions.userGot( user ))
 }, actions.failed)
 
 
@@ -223,3 +260,38 @@ export const updateMe = (token, fieldData) => catchAsyncDispatch(async (dispatch
   const { data: { user } } = await axios(token).patch('/api/users/me', fieldData)
   dispatch(actions.updateMe( user ))
 }, actions.failed)
+
+
+// /src/screens/user/profilePayments.js
+export const getUserPayments = (token, userId) => catchAsyncDispatch( async (dispatch) => {
+  if(!token) return console.log('no token or userId in getUserPayments')
+
+  dispatch(actions.requested())
+  const { data: { payments } } = await axios(token).get(`/api/payments/${userId}`, { })
+  dispatch(actions.updateMyPayments( payments ))
+}, actions.failed)
+
+
+// /src/screens/user/profileProduct.js
+export const getUserProducts = (token, userId) => catchAsyncDispatch( async (dispatch) => {
+  if(!token) return console.log('no token or userId in getUserProducts')
+
+  dispatch(actions.requested())
+  // const { data : { products }} = await axios(token).get(`/api/products?user=${userId}`)
+  const { data : { products }} = await axios(token).get('/api/products', {
+    params: { user: userId }
+  })
+  dispatch(actions.getUserProducts(products))
+}, actions.failed)
+
+
+// used in productReducer.js > getProductById
+
+// // src/components/productDetails.js
+// export const getProductById = (token, productId) => catchAsyncDispatch( async (dispatch) => {
+//   if(!token) return console.log('no token or productId in getProductById')
+
+//   dispatch( actions.requested() )
+//   const { data: { product }} = await axios(token).get(`/api/products/${productId}`)
+//   dispatch( actions.getProductById(product) )
+// }, actions.failed)

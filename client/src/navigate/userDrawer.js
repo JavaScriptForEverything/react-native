@@ -10,9 +10,8 @@ import Logout from '../screens/user/logout'                 // 3
 
 
 const drawerItems = [
-  { name: 'About Me', Component: AboutMeScreen },
   { name: 'User Profile', Component: ProductStack },   // Main Profile page
-  // { name: 'About Me', Component: AboutMeScreen },
+  { name: 'About Me', Component: AboutMeScreen },
   { name: 'Contact Us', Component: ContactUsScreen },
   { name: 'Help', Component: HelpScreen },
 ]

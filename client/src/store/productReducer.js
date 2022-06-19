@@ -7,7 +7,7 @@ const { reducer, actions } = createSlice({
     loading: false,
     error: '',
     products: [],               // To store all products
-    product: {},                // To store findProductById
+    product: {},                // To store getProductById
     carts: [],                  // To store products as cart
   },
   reducers: {
@@ -44,6 +44,11 @@ const { reducer, actions } = createSlice({
         ? action.payload 
         : oldProduct
       )
+    }),
+    getProductById: (state, action) => ({
+      ...state,
+      loading: false,
+      product: action.payload
     })
 
   } // End of reducers
@@ -80,3 +85,12 @@ export const addToCart = (carts) => catchAsyncDispatch( async (dispatch) => {
 export const updateProduct = (product) => (dispatch) => {
   dispatch(actions.updateProduct(product))
 }
+
+
+
+// src/components/productDetails.js
+export const getProductById = (productId) => catchAsyncDispatch( async (dispatch) => {
+  dispatch( actions.requested() )
+  const { data: { product }} = await axios().get(`/api/products/${productId}`)
+  dispatch( actions.getProductById(product) )
+}, actions.failed)

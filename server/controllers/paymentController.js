@@ -72,3 +72,18 @@ exports.cashOnDelivery = catchAsync( async(req, res, next) => {
 	})
 })
 
+
+exports.getUserPayments = catchAsync( async (req, res, next) => {
+	const { userId } = req.params
+
+	const payments = await Payment.find({ userId })
+	// if(!payments.length) return next(appError('No payment found', 404))
+
+	console.log({ userId })
+
+	res.status(200).json({
+		status: 'success',
+		length: payments.length,
+		payments
+	})
+})
