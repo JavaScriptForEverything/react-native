@@ -22,7 +22,7 @@ const Layout = ({ isStack=false, children }) => {
 	useEffect( async() => {
 		const token = await AsyncStorageLib.getItem('token')
 		if(!token) return 
-		
+
 		dispatch(getMe(token))
 		// navigation.navigate('Profile')
 	}, [])

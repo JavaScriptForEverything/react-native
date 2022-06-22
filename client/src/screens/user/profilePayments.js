@@ -16,8 +16,9 @@ const ProfileScreen = () => {
   // console.log(user.products.length)
 
   useEffect(() => {
-    user._id && dispatch(getUserPayments(token, user._id))                 // userId
-  }, [])
+    user._id && token && dispatch(getUserPayments(token, user._id))                 // userId
+    // user._id && dispatch(getUserPayments(token, user._id))                 // userId
+  }, [user._id, token])
 
   const itemHandler = (paymentId) => () => {
     navigation.navigate('User Payments Details', { paymentId })   

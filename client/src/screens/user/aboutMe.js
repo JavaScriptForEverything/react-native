@@ -59,11 +59,12 @@ const AboutMe = () => {
             <Pressable onPress={avatarPressHandler}>
 
               <Image 
-                source={{ 
-                  uri: `${BASE_URL}/${user.avatar.secure_url}`    // 3. load from database after upload
-                    || avatar.secure_url                          // 2. show immediately when try to upload user photo
-                    || `${BASE_URL}/static/images/avatar.png`     // 1. default user photo
-                }} 
+                source={require('../../../assets/avatar.png')}
+                // source={{ 
+                //   uri: `${BASE_URL}/${user.avatar.secure_url}`    // 3. load from database after upload
+                //     || avatar.secure_url                          // 2. show immediately when try to upload user photo
+                //     || `${BASE_URL}/static/images/avatar.png`     // 1. default user photo
+                // }} 
                 style={styles.profileImage}
               />
 

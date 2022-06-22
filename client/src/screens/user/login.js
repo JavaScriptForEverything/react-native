@@ -26,9 +26,11 @@ const LoginScreen = () => {
   const [ fields, setFields ] = useState({ ...inputItemsAsObject })
   const [ fieldsError, setFieldsError ] = useState({ ...inputItemsAsObject })
 
+  // console.log({ token })
+
   const protecte = async () => {
     const oldToken = await localStorage.getItem('token')
-    dispatch( modifyToken(oldToken) )
+    oldToken && dispatch( modifyToken(oldToken) )
   }
   useEffect(() => {
     protecte()
@@ -39,7 +41,7 @@ const LoginScreen = () => {
   }, [error, authenticated, user])
 
   useEffect(() => {
-    // if(token) return navigation.navigate('Profile')
+    if(token) return navigation.navigate('Profile')
     navigation.navigate('Login')
   }, [token])
 

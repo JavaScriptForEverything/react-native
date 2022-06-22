@@ -76,10 +76,8 @@ const { reducer, actions } = createSlice({
       loading: false,
       user: {
         ...state.user,
-        ...action.payload,                // => { data: { user }}
-      }
-      // token: action.payload.token,      // update token from asyncStorage
-      // authenticated: true
+        ...action.payload                      // => { data: { user }}
+      },
     }),
     passwordForgotten: (state, action) => ({
       ...state,
@@ -141,7 +139,10 @@ export default reducer
 
 
 // /src/screens/user/login.js   : => load token from asyncStorage and modify user.token 
-export const modifyToken = (token) => dispatch => dispatch(actions.modifyToken(token))
+export const modifyToken = (token) => dispatch => {
+  if(!token) return
+  dispatch(actions.modifyToken(token))
+}
 
 
 /* dispatch( getProducts(filterObj={}) )       
@@ -209,16 +210,17 @@ export const getMe = (token) => catchAsyncDispatch( async (dispatch) => {
 
   dispatch(actions.requested())
   const { data: { user }} = await axios(token).get('/api/users/me')
-  dispatch(actions.userGot( user ))
+  dispatch(actions.userGot(user))
 }, actions.failed)
 
 
+// import Logout from '../screens/user/logout'                 // 3
 export const logoutMe = (token) => async dispatch => {
   if(!token) return console.log('No Token')
 
   dispatch(actions.requested())
-  dispatch(actions.logedOut())
   await asyncStorage.removeItem('token')
+  dispatch(actions.logedOut())
 }
 
 

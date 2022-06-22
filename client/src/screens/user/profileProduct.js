@@ -9,16 +9,19 @@ import { Text, List } from 'react-native-paper'
 const ProfileProductScreen = ({ navigation }) => {
   const dispatch = useDispatch()
   const { token, user } = useSelector(state => state.user)
+  // const user  = useSelector(state => state.user)
 
   // console.log(user._id)
   // console.log('products: ', user.products?.length)
   // console.log('payments', user.payments?.length)
 
+  console.log({ token })
+  // console.log({ user })
 
   useEffect(() => {
-    // if not condition check and wait, then it throw error, because user._id take to get
+    // if not condition check and wait, then it throw error, because user._id take time to get it.
     user._id && dispatch(getUserProducts(token, user._id))
-  }, [user._id])
+  }, [user._id, token])
 
 
   const itemHandler = (productId) => () => {

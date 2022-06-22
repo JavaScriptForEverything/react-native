@@ -49,7 +49,13 @@ const { reducer, actions } = createSlice({
       ...state,
       loading: false,
       product: action.payload
-    })
+    }),
+    deleteProductById: (state, action) => ({
+      ...state,
+      loading: false,
+      products: state.products.filter( product => product._id !== action.payload )
+    }),
+
 
   } // End of reducers
 })
@@ -94,3 +100,13 @@ export const getProductById = (productId) => catchAsyncDispatch( async (dispatch
   const { data: { product }} = await axios().get(`/api/products/${productId}`)
   dispatch( actions.getProductById(product) )
 }, actions.failed)
+
+// src/components/productDetails.js
+export const deleteProductById = (token, productId) => catchAsyncDispatch( async (dispatch) => {
+  if(!token) return console.log('To delete product need token')
+
+  dispatch( actions.requested() )
+  await axios(token).delete(`/api/products/${productId}`)
+  dispatch( actions.deleteProductById(productId) )
+}, actions.failed)
+
