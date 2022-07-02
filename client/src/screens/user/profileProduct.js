@@ -15,7 +15,7 @@ const ProfileProductScreen = ({ navigation }) => {
   // console.log('products: ', user.products?.length)
   // console.log('payments', user.payments?.length)
 
-  console.log({ token })
+  // console.log({ token })
   // console.log({ user })
 
   useEffect(() => {

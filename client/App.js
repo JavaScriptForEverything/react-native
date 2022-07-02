@@ -18,3 +18,7 @@ const App = () => {
 	)
 }
 export default App
+
+/* client/.env
+	BASE_URL=http://192.168.0.105:5000
+*/

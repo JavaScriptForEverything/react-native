@@ -195,6 +195,8 @@ export const logOnTo = (obj={}) => catchAsyncDispatch( async (dispatch) => {
   const { data: { token } } = await axios().post('/api/users/login', obj )
   dispatch(actions.logedIn( token ))
 
+  // console.log(token)
+
   /* asyncStorage return promise and if we try to await inside redux dispatch handler
   ** it throw error because redux Store only handler synchronous task
   **    - that's the reason use handle here instead of dispatch handler.  */ 
@@ -219,8 +221,8 @@ export const logoutMe = (token) => async dispatch => {
   if(!token) return console.log('No Token')
 
   dispatch(actions.requested())
-  await asyncStorage.removeItem('token')
   dispatch(actions.logedOut())
+  await asyncStorage.removeItem('token')
 }
 
 

@@ -28,13 +28,13 @@ const LoginScreen = () => {
 
   // console.log({ token })
 
-  const protecte = async () => {
-    const oldToken = await localStorage.getItem('token')
-    oldToken && dispatch( modifyToken(oldToken) )
-  }
-  useEffect(() => {
-    protecte()
-  }, [])
+  // const protecte = async () => {
+  //   const oldToken = await localStorage.getItem('token')
+  //   oldToken && dispatch( modifyToken(oldToken) )
+  // }
+  // useEffect(() => {
+  //   protecte()
+  // }, [])
 
   useEffect(() => {
     if(error) console.log(error)
